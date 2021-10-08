@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="" readonly="0" foreign_keys="" case_sensitive_like="" temp_store="" wal_autocheckpoint="" synchronous=""/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="802"/><column_width id="4" width="0"/></tab_structure><tab_browse><current_table name="0,0:"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE User(
+	username varchar(32) not null,
+	password varchar(32) not null,
+	email varchar(64),
+	first_name not null varchar (32),
+	last_name not null varchar(32),
+	gender varchar(1),
+	person_id not null varchar(32)
+);
+CREATE TABLE Person(
+	person_id varchar(32) not null,
+	username varchar(32) not null,
+	first_name not null varchar (32),
+	last_name not null varchar(32),
+	gender varchar(1),
+	father_id not null varchar(32),
+	mother_id not null varchar(32),
+	spouse_id not null varchar(32)
+);
+CREATE TABLE Event(
+	event_id varchar(32) not null,
+	username varchar(32) not null,
+	person_id varchar(32) not null,
+	latitude float,
+	longitude float,
+	country not null varchar(32),
+	city not null varchar(32),
+	event_type not null varchar(32),
+	year int
+);
+CREATE TABLE authtoken(
+	token varchar(32) not null,
+	username varchar(32) not null
+);</sql><current_tab id="0"/></tab_sql></sqlb_project>
