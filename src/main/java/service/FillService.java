@@ -37,7 +37,7 @@ public class FillService {
      * @param request the request in question
      * @return
      */
-    FillResult clear(FillRequest request){
+    FillResult fill(FillRequest request){
         return null;
     }
 }

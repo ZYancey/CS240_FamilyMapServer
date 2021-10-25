@@ -5,40 +5,42 @@ DROP TABLE if EXISTS authtoken;
 
 
 CREATE TABLE user(
-	username varchar(32) not null,
-	password varchar(32) not null,
-	email varchar(32),
-	first_name varchar (32) not null,
-	last_name varchar(32) not null,
-	gender varchar(1),
-	person_id varchar(32) not null,
-	PRIMARY KEY (username)
+	Username text not null unique,
+	Password text not null,
+	Email text not null,
+	FirstName text not null,
+	LastName text not null,
+	Gender text,
+	PersonID text not null,
+	PRIMARY KEY (Username)
 );
 CREATE TABLE person(
-	person_id varchar(32) not null,
-	username varchar(32) not null,
-	first_name varchar (32) not null,
-	last_name varchar(32) not null,
-	gender varchar(1),
-	father_id varchar(32) not null,
-	mother_id varchar(32) not null,
-	spouse_id varchar(32) not null,
-	PRIMARY KEY (username)
+	PersonID text not null unique,
+	Username text not null,
+	FirstName text not null,
+	LastName text not null,
+	Gender text,
+	FatherID text not null,
+	MotherID text not null,
+	SpouseID text not null,
+	PRIMARY KEY (PersonID)
 );
 CREATE TABLE event(
-	event_id varchar(32) not null,
-	username varchar(32) not null,
-	person_id varchar(32) not null,
-	latitude float,
-	longitude float,
-	country varchar(32) not null,
-	city varchar(32) not null,
-	event_type varchar(32) not null,
-	year int,
-	PRIMARY KEY (username)
+	EventID text not null unique,
+	AssociatedUsername text not null,
+	PersonID text not null,
+	Latitude float not null,
+	Longitude float not null,
+	Country text not null,
+	City text not null,
+	EventType text not null,
+	Year int not null,
+	primary key (EventID),
+	foreign key (AssociatedUsername) references Users(Username),
+	foreign key (PersonID) references person(PersonID)
 );
 CREATE TABLE authtoken(
 	token varchar(32) not null,
 	username varchar(32) not null,
-	PRIMARY KEY (username)
+	PRIMARY KEY (token)
 );

@@ -29,7 +29,7 @@ public class EventService {
      * @param request the request in question
      * @return
      */
-    EventResult clear(EventRequest request){
+    EventResult event(EventRequest request){
         return null;
     }
 }

@@ -1,34 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="" readonly="0" foreign_keys="" case_sensitive_like="" temp_store="" wal_autocheckpoint="" synchronous=""/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="802"/><column_width id="4" width="0"/></tab_structure><tab_browse><current_table name="0,0:"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE User(
-	username varchar(32) not null,
-	password varchar(32) not null,
-	email varchar(64),
-	first_name not null varchar (32),
-	last_name not null varchar(32),
-	gender varchar(1),
-	person_id not null varchar(32)
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/Users/yancey/Desktop/CS240/FamilyMapServer/familymap.sqlite" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1804"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="3" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainperson"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Events" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="49"/><column index="2" value="118"/><column index="3" value="56"/><column index="4" value="51"/><column index="5" value="60"/><column index="6" value="50"/><column index="7" value="30"/><column index="8" value="64"/><column index="9" value="31"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="event" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="53"/><column index="2" value="59"/><column index="3" value="60"/><column index="4" value="48"/><column index="5" value="57"/><column index="6" value="48"/><column index="7" value="28"/><column index="8" value="67"/><column index="9" value="31"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="person" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="60"/><column index="2" value="59"/><column index="3" value="65"/><column index="4" value="62"/><column index="5" value="45"/><column index="6" value="57"/><column index="7" value="63"/><column index="8" value="61"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">DROP TABLE if EXISTS user;
+DROP TABLE if EXISTS person;
+DROP TABLE if EXISTS event;
+DROP TABLE if EXISTS authtoken;
+
+
+CREATE TABLE user(
+	Username text not null unique,
+	Password text not null,
+	Email text not null,
+	FirstName text not null,
+	LastName text not null,
+	Gender text,
+	PersonID text not null,
+	PRIMARY KEY (Username)
 );
-CREATE TABLE Person(
-	person_id varchar(32) not null,
-	username varchar(32) not null,
-	first_name not null varchar (32),
-	last_name not null varchar(32),
-	gender varchar(1),
-	father_id not null varchar(32),
-	mother_id not null varchar(32),
-	spouse_id not null varchar(32)
+CREATE TABLE person(
+	PersonID text not null unique,
+	Username text not null,
+	FirstName text not null,
+	LastName text not null,
+	Gender text,
+	FatherID text not null,
+	MotherID text not null,
+	SpouseID text not null,
+	PRIMARY KEY (PersonID)
 );
-CREATE TABLE Event(
-	event_id varchar(32) not null,
-	username varchar(32) not null,
-	person_id varchar(32) not null,
-	latitude float,
-	longitude float,
-	country not null varchar(32),
-	city not null varchar(32),
-	event_type not null varchar(32),
-	year int
+CREATE TABLE event(
+	EventID text not null unique, 
+	AssociatedUsername text not null, 
+	PersonID text not null, 
+	Latitude float not null, 
+	Longitude float not null, 
+	Country text not null, 
+	City text not null, 
+	EventType text not null, 
+	Year int not null, 
+	primary key (EventID), 
+	foreign key (AssociatedUsername) references Users(Username), 
+	foreign key (PersonID) references person(PersonID)
 );
 CREATE TABLE authtoken(
 	token varchar(32) not null,
-	username varchar(32) not null
+	username varchar(32) not null,
+	PRIMARY KEY (token)
 );</sql><current_tab id="0"/></tab_sql></sqlb_project>

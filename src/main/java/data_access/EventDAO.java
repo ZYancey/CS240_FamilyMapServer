@@ -2,24 +2,23 @@ package data_access;
 
 import model.Event;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
+@SuppressWarnings("SqlResolve")
 public class EventDAO {
     private final Connection conn;
 
-    public EventDAO(Connection conn)
-    {
+    public EventDAO(Connection conn) {
         this.conn = conn;
     }
 
     public void insert(Event event) throws DataAccessException {
         //We can structure our string to be similar to a sql command, but if we insert question
         //marks we can change them later with help from the statement
-        String sql = "INSERT INTO Events (EventID, AssociatedUsername, PersonID, Latitude, Longitude, " +
+
+        String sql = "INSERT INTO event (EventID, AssociatedUsername, PersonID, Latitude, Longitude, " +
                 "Country, City, EventType, Year) VALUES(?,?,?,?,?,?,?,?,?)";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             //Using the statements built-in set(type) functions we can pick the question mark we want
             //to fill in and give it a proper value. The first argument corresponds to the first
@@ -43,7 +42,7 @@ public class EventDAO {
     public Event find(String eventID) throws DataAccessException {
         Event event;
         ResultSet rs = null;
-        String sql = "SELECT * FROM Events WHERE EventID = ?;";
+        String sql = "SELECT * FROM event WHERE EventID = ?;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, eventID);
             rs = stmt.executeQuery();
@@ -68,5 +67,13 @@ public class EventDAO {
 
         }
         return null;
+    }
+    public void clearTables() throws DataAccessException {
+        try (Statement stmt = conn.createStatement()){
+            String sql = "DELETE FROM event";
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new DataAccessException("SQL Error encountered while clearing tables");
+        }
     }
 }

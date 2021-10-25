@@ -29,7 +29,7 @@ public class EventIDService {
      * @param request the request in question
      * @return
      */
-    EventIDResult clear(EventIDRequest request){
+    EventIDResult eventID(EventIDRequest request){
         return null;
     }
 }
