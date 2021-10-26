@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is a mock client used for pass off of the CS240 Family Map Server project.
- * Since the next project is an Android Client, we decided to obfuscate this code
+ * This is a mock client used for pass off of the CS240 Family Map server.Server project.
+ * Since the next project is an Android server.Client, we decided to obfuscate this code
  * in order to preserve the integrity of the learning process for the next project.
  * <p>
  * However, obfuscated code is intentionally hard to read. Therefore, by mercy of
@@ -119,7 +119,7 @@ public class ServerTest {
             //Checks to see if you filled registerResult with a username String
             assertNotEquals(EMPTY_STRING, result.getUsername(), "username was empty string, expected username passed in with passoffrequest");
             //Checks to see if the username string matches the one that was in the request (sheila)
-            assertEquals(SHEILA.getUsername(), result.getUsername(), "username from Server does not match the requested username");
+            assertEquals(SHEILA.getUsername(), result.getUsername(), "username from server.Server does not match the requested username");
         } catch (ServerConnectionException e) {
             fail(e.getMessage());
         }
@@ -188,7 +188,7 @@ public class ServerTest {
             //Checks to see if you filled loginResult with a username String
             assertNotEquals(EMPTY_STRING, result.getUsername(), "username was empty string, expected username passed in with passoffrequest");
             //Checks to see if the username string from loginResult matches the username that was in both requests (sheila)
-            assertEquals(SHEILA.getUsername(), result.getUsername(), "username from Server does not match the requested username ");
+            assertEquals(SHEILA.getUsername(), result.getUsername(), "username from server.Server does not match the requested username ");
         } catch (ServerConnectionException e) {
             fail(e.getMessage());
         }
@@ -931,7 +931,7 @@ public class ServerTest {
         //Will wait on the statement scanner.nextLine() till you push enter in the terminal window.
         //You may need to follow the steps under the heading "Setting up for the Persistence Test" in the "How To Get Started"
         //tutorial, linked in canvas, in order to get this to work properly. The "How to Get Started" tutorial can be found
-        //inside the Family Map Server Program assignment listed on the Assignments tab on canvas.
+        //inside the Family Map server.Server Program assignment listed on the Assignments tab on canvas.
         scanner.nextLine();
         try {
             //We are creating a JsonReader from the LoadData.json file
