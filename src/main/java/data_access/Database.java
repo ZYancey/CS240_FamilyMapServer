@@ -1,5 +1,8 @@
 package data_access;
 
+import model.AuthToken;
+import model.User;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,6 +10,34 @@ import java.sql.Statement;
 
 public class Database {
     private Connection conn;
+    private AuthTokenDAO AuthData;
+    private UserDAO UserData;
+    private EventDAO EventData;
+    private PersonDAO PersonData;
+
+    public Database(){
+        System.out.println("CONSTRUCTING DAOS");
+        try {
+            getConnection();
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        AuthData = new AuthTokenDAO(conn);
+        UserData = new UserDAO(conn);
+        EventData = new EventDAO(conn);
+        PersonData = new PersonDAO(conn);
+    }
+
+    public void setConnection() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:familymap.sqlite");
+            //Prevent changes from auto-committing.
+            conn.setAutoCommit(false);
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
 
     //Whenever we want to make a change to our database we will have to open a connection and use
     //Statements created by that connection to initiate transactions
@@ -28,7 +59,6 @@ public class Database {
 
         return conn;
     }
-
     public Connection getConnection() throws DataAccessException {
         if(conn == null) {
             return openConnection();
@@ -36,6 +66,12 @@ public class Database {
             return conn;
         }
     }
+
+    public AuthTokenDAO getAuthData(){return AuthData;}
+    public UserDAO getUserData(){return UserData;}
+    public EventDAO getEventData(){return EventData;}
+    public PersonDAO getPersonData(){return PersonData;}
+
 
     //When we are done manipulating the database it is important to close the connection. This will
     //End the transaction and allow us to either commit our changes to the database or rollback any
@@ -45,6 +81,7 @@ public class Database {
     //DATABASE TO LOCK. YOUR CODE MUST ALWAYS INCLUDE A CLOSURE OF THE DATABASE NO MATTER WHAT ERRORS
     //OR PROBLEMS YOU ENCOUNTER
     public void closeConnection(boolean commit) throws DataAccessException {
+        System.out.println("\tDATABASE: Attempting to Close Connection");
         try {
             if (commit) {
                 //This will commit the changes to the database
@@ -57,9 +94,12 @@ public class Database {
 
             conn.close();
             conn = null;
+            System.out.println("success");
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("FAILURE");
             throw new DataAccessException("Unable to close database connection");
+
         }
     }
     public void clearTables() throws DataAccessException {
@@ -74,6 +114,7 @@ public class Database {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
     }
+
 
 }
 

@@ -57,7 +57,7 @@ public class UserDAOTest {
         //only that it ran without causing an error
         uDao.insert(bestUser);
         //So lets use a find method to get the event that we just put in back out
-        User compareTest = uDao.find(bestUser.getPersonID());
+        User compareTest = uDao.find(bestUser.getUsername());
         //First lets see if our find found anything at all. If it did then we know that if nothing
         //else something was put into our database, since we cleared it in the beginning
         assertNotNull(compareTest);
@@ -69,7 +69,7 @@ public class UserDAOTest {
     @Test
     public void retrievalPass() throws DataAccessException {
         uDao.insert(bestUser);
-        User compareTest = uDao.find(bestUser.getPersonID());
+        User compareTest = uDao.find(bestUser.getUsername());
         assertNotNull(compareTest);
         assertEquals(bestUser, compareTest);
     }

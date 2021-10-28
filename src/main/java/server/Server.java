@@ -52,8 +52,8 @@ public class Server {
 			// the object by calling the HttpServer.create static factory method.
 			// Just like "new", this method returns a reference to the new object.
 			server = HttpServer.create(
-						new InetSocketAddress(Integer.parseInt(portNumber)),
-						MAX_WAITING_CONNECTIONS);
+					new InetSocketAddress(Integer.parseInt(portNumber)),
+					MAX_WAITING_CONNECTIONS);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -70,25 +70,25 @@ public class Server {
 		// is received, it looks at the URL path inside the HTTP request, and
 		// forwards the request to the handler for that URL path.
 		System.out.println("Creating contexts");
-		
-		// Create and install the HTTP handler for the "/games/list" URL path.
-		// When the HttpServer receives an HTTP request containing the
-		// "/games/list" URL path, it will forward the request to server.ListGamesHandler
-		// for processing.
-		server.createContext("/games/list", new ListGamesHandler());
-			
-		// Create and install the HTTP handler for the "/routes/claim" URL path.
-		// When the HttpServer receives an HTTP request containing the
-		// "/routes/claim" URL path, it will forward the request to server.ClaimRouteHandler
-		// for processing.
-		server.createContext("/routes/claim", new ClaimRouteHandler());
-		
+
+		// Create and install the HTTP handlers for the given paths
+		// /user/register
+		server.createContext("/user/register", new RegisterHandler());
+		// /user/login
+		server.createContext("/user/login", 	new LoginHandler());
+		// /clear
+		server.createContext("/clear", 		new ClearHandler());
+		// /fill/[username]/{generations}
+		server.createContext("/fill", 			new FillHandler());
+		// /load
+		server.createContext("/load", 		new LoadHandler());
+		// /person/[personID]
+		// /person
+		server.createContext("/person", 		new PersonHandler());
+		// /event
+		server.createContext("/event", 		new EventHandler());
 		// Create and install the "default" (or "file") HTTP handler.
-		// All requests that do not match the other handler URLs
-		// will be passed to this handle.
-		// These are requests to download a file from the server 
-		// (e.g., web site files)
-		server.createContext("/", new FileHandler());
+		server.createContext("/", 			new FileHandler());
 		
 		// Log message indicating that the HttpServer is about the start accepting
 		// incoming client connections.
@@ -101,9 +101,8 @@ public class Server {
 		// running because the HttpServer object we created is still running
 		// in the background.
 		server.start();
-		
 		// Log message indicating that the server has successfully started.
-		System.out.println("server.Server started");
+		System.out.println("server.Server started on port " + portNumber);
 	}
 
 	// "main" method for the server program

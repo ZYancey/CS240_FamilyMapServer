@@ -1,26 +1,26 @@
 package model;
 
 public class AuthToken{
-        private String eventID;
-        private String associatedUsername;
-        private String personID;
-        private float latitude;
-        private float longitude;
-        private String country;
-        private String city;
-        private String eventType;
-        private int year;
+    private String authtoken;
+    private String username;
+    private String personID;
+    private Boolean success;
 
-        public AuthToken(String eventID, String username, String personID, float latitude, float longitude,
-                     String country, String city, String eventType, int year) {
-            this.eventID = eventID;
-            this.associatedUsername = username;
-            this.personID = personID;
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.country = country;
-            this.city = city;
-            this.eventType = eventType;
-            this.year = year;
-        }
+    public AuthToken(String token, String username, String personID) {
+        this.authtoken = token;
+        this.username = username;
+        this.personID = personID;
+        success = true;
+    }
+
+    public void setAuthTokenID(String authToken) { this.authtoken = authToken; }
+    public void setUsername(String userName) { this.username = userName; }
+    public void setPersonID(String personID) { this.personID = personID; }
+    public void setSuccess(Boolean success) { this.success = success; }
+
+    public String getAuthToken() { return authtoken; }
+    public String getUserName() { return username; }
+    public String getPersonID() { return personID; }
+    public Boolean getSuccess(){ return success; }
+
 }

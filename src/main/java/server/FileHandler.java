@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.io.File;
+import java.util.Objects;
 
 public class FileHandler implements HttpHandler {
 
@@ -21,22 +22,35 @@ public class FileHandler implements HttpHandler {
             if (exchange.getRequestMethod().toLowerCase().equals("get")) {
                 Headers reqHeaders = exchange.getRequestHeaders();
                 String urlPath = exchange.getRequestURI().toString();
-                if(urlPath == null || urlPath == "/"){
+                if(Objects.equals(urlPath, "") || Objects.equals(urlPath, "/")){
+                    System.out.println("\"" + urlPath + "\" converted to index.html");
                     urlPath = "/index.html";
                 }
 
                 String filePath = "web" + urlPath;
                 File file = new File(filePath);
 
+                OutputStream respBody = exchange.getResponseBody();
+
                 if(!file.exists()){
+                    System.out.println("~~~~~404~~~~~~");
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
+
+                    filePath = "web/HTML/404.html";
+                    file = new File(filePath);
+
+                    Files.copy(file.toPath(), respBody);
                     exchange.getResponseBody().close();
+                    respBody.close();
+
                 }else{
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    Files.copy(file.toPath(), respBody);
+                    System.out.println("\t" + filePath + " served to user.");
                 }
 
-                OutputStream respBody = exchange.getResponseBody();
-                Files.copy(file.toPath(), respBody);
+
+
 
 
                 // Close the output stream.  This is how Java knows we are done

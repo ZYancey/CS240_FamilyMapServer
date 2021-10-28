@@ -11,15 +11,7 @@ import data_access.*;
  */
 public class PersonService {
 
-    /**
-     *  Outputs Response Body
-     */
     private String message;
-
-
-    /**
-     *  Tracks if operation was successful or not
-     */
     private boolean success;
 
 
@@ -29,7 +21,18 @@ public class PersonService {
      * @param request the request in question
      * @return
      */
-    PersonResult person(PersonRequest request){
+    public PersonResult getAllPersons(PersonRequest request){
         return null;
     }
+
+    /**
+     * Returns a single family member of the current user. The current user is determined from the provided auth token.
+     *
+     * @param request the request in question
+     * @return
+     */
+    public PersonResult getPerson(PersonRequest request){
+        return null;
+    }
+
 }

@@ -1,8 +1,6 @@
 package service;
 
-import result.ClearResult;
-import request.ClearRequest;
-import model.*;
+import result.*;
 import data_access.*;
 
 
@@ -11,25 +9,35 @@ import data_access.*;
  */
 public class ClearService {
 
-    /**
-     *  Outputs Response Body
-     */
-    private String message;
+    public ClearService() {}
 
+    public Result clear() {
+        //Create Database Access Objects.
+        Database db = new Database();
 
-    /**
-     *  Tracks if operation was successful or not
-     */
-    private boolean success;
-
-
-    /**
-     * Deletes all data and returns if the function was success
-     *
-     * @param request the clear request in question
-     * @return
-     */
-    ClearResult clear(ClearRequest request){
-        return null;
+        try {
+            //AuthToken deletion.
+            db.getAuthData().clearTables();
+            //Person deletion.
+            db.getPersonData().clearTables();
+            //Event deletion.
+            db.getEventData().clearTables();
+            //User deletion.
+            db.getUserData().clearTables();
+        } catch (DataAccessException e) {
+            try {
+                db.closeConnection(false);
+            } catch (DataAccessException ex) {
+                ex.printStackTrace();
+            }
+            return new Result("Clear failed");
+        }
+        //All deletions passed.
+        try {
+            db.closeConnection(true);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return new Result("Clear succeeded.");
     }
 }

@@ -1,8 +1,8 @@
 package service;
 
-import result.FillResult;
 import request.FillRequest;
 import model.*;
+import result.*;
 import data_access.*;
 
 
@@ -37,7 +37,7 @@ public class FillService {
      * @param request the request in question
      * @return
      */
-    FillResult fill(FillRequest request){
+    Result fill(FillRequest request){
         return null;
     }
 }

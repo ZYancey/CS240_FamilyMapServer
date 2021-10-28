@@ -11,25 +11,14 @@ import data_access.*;
  */
 public class EventService {
 
-    /**
-     *  Outputs Response Body
-     */
     private String message;
-
-
-    /**
-     *  Tracks if operation was successful or not
-     */
     private boolean success;
 
 
-    /**
-     * Returns ALL events for ALL family members of the current user. The current user is determined from the provided auth token.
-     *
-     * @param request the request in question
-     * @return
-     */
-    EventResult event(EventRequest request){
+    public EventResult getAllEvents(EventRequest request){
+        return null;
+    }
+    public EventResult getEvent(EventRequest request){
         return null;
     }
 }

@@ -1,8 +1,7 @@
 package service;
 
-import result.LoadResult;
+import result.Result;
 import request.LoadRequest;
-import model.*;
 import data_access.*;
 
 
@@ -30,7 +29,7 @@ public class LoadService {
      * @param request the request in question
      * @return
      */
-    LoadResult load(LoadRequest request){
+    Result load(LoadRequest request){
         return null;
     }
 }
