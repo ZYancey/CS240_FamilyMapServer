@@ -42,9 +42,7 @@ public class LoginService {
 
             //Generate a new AuthToken with the userName and personID.
             String authID = UUID.randomUUID().toString();
-            String personID = db.getUserData().getUser(lr.getUsername()).getPersonID();
-
-            AuthToken a = new AuthToken(authID, lr.getUsername(), personID);
+            AuthToken a = new AuthToken(authID, lr.getUsername(), entry.getPersonID());
 
             db.getAuthData().addAuthToken(a);
             db.closeConnection(true);

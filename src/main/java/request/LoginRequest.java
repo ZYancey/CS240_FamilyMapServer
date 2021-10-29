@@ -2,32 +2,24 @@ package request;
 
 /**This class defines the attributes for a LoginRequest object.*/
 public class LoginRequest {
-    /**The general constructor for a LoginRequest.
-     * @param userName	the userName for the request.
-     * @param password	the password for the request.*/
-    public LoginRequest(String userName, String password) {
-        setUsername(userName);
+    public LoginRequest(String username, String password) {
+        setUsername(username);
         setPassword(password);
     }
 
     /**The userName of the person making the request.*/
-    private String userName;
+    private String username;
 
     /**The password of the person making the request.*/
     private String password;
 
 
+    public void setUsername(String username) { this.username = username; }
 
-    /**Sets the userName for the request.
-     * @param userName 	the desired userName for the request.*/
-    public void setUsername(String userName) { this.userName = userName; }
-
-    /**Sets the password for the request.
-     * @param password	the desired password for the request.*/
     public void setPassword(String password) { this.password = password; }
 
     /**@return 			the userName that is attached to the request.*/
-    public String getUsername() { return userName; }
+    public String getUsername() { return username; }
 
     /**@return 			the password that is attached to the request.*/
     public String getPassword() { return password; }

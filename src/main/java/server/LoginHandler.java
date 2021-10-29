@@ -37,7 +37,7 @@ public class LoginHandler implements HttpHandler {
                 }
             }
 
-            if(!success) {
+            if(!success){
                 exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 if(error != null) {
                     OutputStreamWriter out = new OutputStreamWriter(exch.getResponseBody());
@@ -55,8 +55,12 @@ public class LoginHandler implements HttpHandler {
 
     /**Check that the request info is valid. Return true if it is, and false if there is a mistake.*/
     private boolean validateRequestInfo(LoginRequest lr) {
-        if(lr.getUsername().isEmpty()) { error = new Result("Username empty"); return false; }
-        if(lr.getPassword().isEmpty()) { error = new Result("Password empty"); return false; }
+        if(lr.getUsername().isEmpty()) {
+            error = new Result("Username empty");
+            return false;}
+        if(lr.getPassword().isEmpty()) {
+            error = new Result("Password empty");
+            return false; }
 
         //At this point everything checks out.
         return true;

@@ -9,66 +9,70 @@ import result.*;
 import service.*;
 
 public class RegisterHandler implements HttpHandler {
-    private AuthResult err;
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    /**A generic Result to be returned in the event of an error.*/
+    private Result err;
+
+    /**The handler to register a user with the server.*/
+    public void handle(HttpExchange exch) throws IOException {
         boolean success = false;
         JSONParser json = new JSONParser();
 
         try {
             //Accept only POST methods.
-            if(exchange.getRequestMethod().toUpperCase().equals("POST")) {
-                InputStream reqBody = exchange.getRequestBody();
+            if(exch.getRequestMethod().toUpperCase().equals("POST")) {
+                InputStream reqBody = exch.getRequestBody();
                 InputStreamReader in = new InputStreamReader(reqBody);
                 RegisterRequest rr = json.JSONToObject(in, RegisterRequest.class);
                 //Check to see if the request info is valid.
                 if(validateRequestBody(rr)) {
                     AuthResult ar = new RegisterService().register(rr);
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-                    OutputStream respBody = exchange.getResponseBody();
+                    exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    OutputStream respBody = exch.getResponseBody();
                     OutputStreamWriter out = new OutputStreamWriter(respBody);
                     out.write(json.ObjectToJSON(ar));
                     out.flush();
                     respBody.close();
-
-                    success = !ar.getMessage().contains("Fail");
-
+                    success = true;
                 }
             }
-            if(!success){
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-                System.out.println("400");
+            if(!success) {
+                exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 if(err != null) {
-                    OutputStreamWriter out = new OutputStreamWriter(exchange.getResponseBody());
+                    OutputStreamWriter out = new OutputStreamWriter(exch.getResponseBody());
                     out.write(json.ObjectToJSON(err));
                     out.flush();
                 }
-                exchange.getResponseBody().close();
+                exch.getResponseBody().close();
             }
         } catch (IOException io) {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
-            exchange.getResponseBody().close();
+            exch.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            exch.getResponseBody().close();
             io.printStackTrace();
         }
     }
 
     private boolean validateRequestBody(RegisterRequest request){
-        if(request.getUsername().isEmpty()) { err = new AuthResult("Username empty"); return false; }
-        if(request.getPassword().isEmpty()) { err = new AuthResult("Password empty"); return false; }
-        if(request.getEmail().isEmpty()) { err = new AuthResult("Email empty"); return false; }
-        if(request.getFirstName().isEmpty()) { err = new AuthResult("First name empty"); return false; }
-        if(request.getLastName().isEmpty()) { err = new AuthResult("Last name empty"); return false; }
-        if(request.getGender().equals("f") || request.getGender().equals("F")) {
-            request.setGender("F");
-        }
-        if(request.getGender().equals("m") || request.getGender().equals("M")) {
-            request.setGender("M");
-        }
-        if(!request.getGender().equals("M") && !request.getGender().equals("F")) {
-            err = new AuthResult("Gender invalid"); return false; }
+        if(request.getUsername().isEmpty()) {
+            err = new AuthResult("Username empty");
+            return false; }
+        if(request.getPassword().isEmpty()) {
+            err = new AuthResult("Password empty");
+            return false; }
+        if(request.getEmail().isEmpty()) {
+            err = new AuthResult("Email empty");
+            return false; }
+        if(request.getFirstName().isEmpty()) {
+            err = new AuthResult("First name empty");
+            return false; }
+        if(request.getLastName().isEmpty()) {
+            err = new AuthResult("Last name empty");
+            return false; }
 
-        //At this point everything checks out.
+        String tempGender = request.getGender().toUpperCase();
+        if(!tempGender.equals("M") && !tempGender.equals("F")) {
+            err = new AuthResult("Gender invalid");
+            return false; }
+
         return true;
-
     }
 }

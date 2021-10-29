@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/main/java/data_access/AuthTokenDAO.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/main/java/data_access/EventDAO.java" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/src/main/java/data_access/EventDAOEX.java" dialect="SQLite" />
     <file url="PROJECT" dialect="SQLite" />
   </component>
 </project>

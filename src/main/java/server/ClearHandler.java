@@ -12,7 +12,6 @@ public class ClearHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         try{
             JSONParser json = new JSONParser();
-
             Result result = new ClearService().clear();
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -21,6 +20,7 @@ public class ClearHandler implements HttpHandler {
             out.write(json.ObjectToJSON(result));
             out.flush();
             respBody.close();
+
         } catch(IOException e){
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_SERVER_ERROR, 0);
             exchange.getResponseBody().close();

@@ -1,38 +1,80 @@
 package service;
 
-import result.PersonResult;
-import request.PersonRequest;
+
 import model.*;
 import data_access.*;
+import request.PersonRequest;
+import result.PersonResult;
 
 
-/**
- * Returns ALL family members of the current user. The current user is determined from the provided auth token.
- */
 public class PersonService {
-
-    private String message;
-    private boolean success;
+    public PersonService() {}
 
 
-    /**
-     * Returns ALL family members of the current user. The current user is determined from the provided auth token.
-     *
-     * @param request the request in question
-     * @return
-     */
-    public PersonResult getAllPersons(PersonRequest request){
-        return null;
+    public PersonResult getAll(PersonRequest pr) {
+        
+        Database db = new Database();
+        try {
+            AuthToken token;
+            try {
+                token = db.getAuthData().getAuthToken(pr.getAuthTokenID());
+                if(token == null) {
+                    db.closeConnection(false);
+                    
+                    return new PersonResult("Invalid AuthTokenID.");
+                }
+            } catch (DataAccessException e) {
+                db.closeConnection(false);
+                
+                return new PersonResult("Invalid AuthTokenID.");
+            }
+
+
+            Person[] results = db.getPersonData().getAllPersons(token.getUserName());
+            db.closeConnection(true);
+            return new PersonResult(results);
+            
+        } catch (DataAccessException per) {
+            try {
+                db.closeConnection(false);
+            } catch (DataAccessException e) {
+                e.printStackTrace();
+            }
+            return new PersonResult(String.format("Failed to get all Persons : %s", per.getLocalizedMessage()));
+        }
     }
 
-    /**
-     * Returns a single family member of the current user. The current user is determined from the provided auth token.
-     *
-     * @param request the request in question
-     * @return
-     */
-    public PersonResult getPerson(PersonRequest request){
-        return null;
-    }
+    public PersonResult getPerson(PersonRequest pr) {
+        
+        Database db = new Database();
+        try {
+            AuthToken token;
+            try {
+                //Get AuthToken
+                token = db.getAuthData().getAuthToken(pr.getAuthTokenID());
+                if(token == null) {
+                    
+                    return new PersonResult("Invalid AuthTokenID.");
+                }
+            } catch (DataAccessException e) {
+                return new PersonResult("Invalid AuthTokenID.");
+            }
 
+            Person result = db.getPersonData().getPerson(pr.getPersonID());
+            if(!result.getUsername().equals(token.getUserName())) {
+                throw new DataAccessException("Not authorized to access that person.");
+            }
+            db.closeConnection(true);
+            
+            
+            return new PersonResult(result);
+        } catch (DataAccessException per) {
+            try {
+                db.closeConnection(false);
+            } catch (DataAccessException e) {
+                e.printStackTrace();
+            }
+            return new PersonResult(String.format("Failed to get Person : %s", per.getLocalizedMessage()));
+        }
+    }
 }
