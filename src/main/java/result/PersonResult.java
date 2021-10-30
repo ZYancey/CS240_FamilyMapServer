@@ -2,29 +2,46 @@ package result;
 
 import model.Person;
 
+/**The class definition for the attributes of a PersonResult.
+ * <p> Extends the Result class.*/
 public class PersonResult extends Result{
+    /**Constructor for returning one Person.
+     * @param p			the person to be returned*/
+    public PersonResult(Person p) {
+        setPerson(p);
+    }
+
+    /**Constructor for returning an array of Persons.
+     * @param d			the Person array to be returned*/
+    public PersonResult(Person[] d) {
+        setData(d);
+    }
+
+    /**Constructor for an error PersonResult.
+     * @param error		the error message*/
+    public PersonResult(String error) {
+        setMessage(error);
+    }
+
+    /**The Person to be returned.*/
     private Person person;
-    private Person[] persons;
 
-    public PersonResult(Person person){
-        setPerson(person);
-    }
-    public PersonResult(Person[] persons) {setPersons(persons);}
-    public PersonResult(String personErr){ setMessage(personErr);}
+    /**The array of Persons to be returned.*/
+    private Person[] data;
 
-    public void setPerson(Person person) {
-        this.person = person;
-    }
 
-    public void setPersons(Person[] persons) {
-        this.persons = persons;
-    }
 
-    public Person getPerson() {
-        return person;
-    }
+    /**Sets the Person to be returned.
+     * @param person	the Person to be returned*/
+    public void setPerson(Person person) { this.person = person; }
 
-    public Person[] getPersons() {
-        return persons;
-    }
+    /**Sets the data to be returned.
+     * @param data		the Person array to be returned*/
+    public void setData(Person[] data) { this.data = data; }
+
+    /**@return the Person to return*/
+    public Person getPerson() { return person; }
+
+    /**@return the Person array data*/
+    public Person[] getData() { return data; }
 }

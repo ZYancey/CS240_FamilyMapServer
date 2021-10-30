@@ -77,6 +77,27 @@ public class Database {
     //IMPORTANT: IF YOU FAIL TO CLOSE A CONNECTION AND TRY TO REOPEN THE DATABASE THIS WILL CAUSE THE
     //DATABASE TO LOCK. YOUR CODE MUST ALWAYS INCLUDE A CLOSURE OF THE DATABASE NO MATTER WHAT ERRORS
     //OR PROBLEMS YOU ENCOUNTER
+
+    public void closeConnection(boolean commit) {
+        try {
+            try {
+                if(commit) { conn.commit(); }
+                if(!commit) { conn.rollback(); }
+                conn.close();
+                conn = null;
+                //logger.log(Level.FINER, "Database connection closed.");
+            } catch (SQLException e) {
+                throw new DataAccessException("closeConnection failed");
+            }
+        } catch (DataAccessException close) {
+            //logger.log(Level.SEVERE, close.getMessage());
+            //logger.log(Level.SEVERE, close.getLocalizedMessage());
+        }
+    }
+
+
+    /*
+
     public void closeConnection(boolean commit) throws DataAccessException {
         System.out.println("\tDATABASE: Attempting to Close Connection");
         try {
@@ -99,6 +120,10 @@ public class Database {
 
         }
     }
+
+    */
+
+
     public void clearTables() throws DataAccessException {
         try (Statement stmt = conn.createStatement()){
             String sql = "DELETE FROM event";

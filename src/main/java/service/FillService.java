@@ -30,16 +30,17 @@ public class FillService {
             if(UserAlreadyRegistered(f.getUsername(), db)) {
                 //Obtain and then delete all Persons and Events tied to the User.
                 ListResult clear = new ListResult(db.getPersonData().getAllPersons(f.getUsername()), db.getEventData().getAllEvents(f.getUsername()));
-                for(int i = 0; i < clear.getPersons().length; i++) {
-                    db.getPersonData().deletePerson(clear.getPersons()[i]);
+                for(int i = 0; i < clear.getPersonList().length; i++) {
+                    db.getPersonData().deletePerson(clear.getPersonList()[i]);
                 }
-                for(int j = 0; j < clear.getEvents().length; j++) {
-                    db.getEventData().deleteEvent(clear.getEvents()[j]);
+                for(int j = 0; j < clear.getEventList().length; j++) {
+                    db.getEventData().deleteEvent(clear.getEventList()[j]);
                 }
 
                 //Create a new Person object for the User since the old one was deleted.
                 User u = db.getUserData().getUser(f.getUsername());
-                Person p = new Person(UUID.randomUUID().toString(), u.getUsername(),  u.getFirstName(), u.getLastName(), u.getGender(), "", "", "");
+                //Person p = new Person(UUID.randomUUID().toString(), u.getUsername(),  u.getFirstName(), u.getLastName(), u.getGender(), "", "", "");
+                Person p = new Person(u.getFirstName(), u.getLastName(), u.getGender(), UUID.randomUUID().toString(),  "", "", "", u.getUsername());
                 //Add the new PersonID back to the User.
                 u.setPersonID(p.getPersonID());
                 db.getUserData().modifyUser(u);
@@ -61,25 +62,22 @@ public class FillService {
                 }
 
                 //Add the newly created Persons and Events to the database.
-                for(int a = 0; a < def.getPersons().length; a++) {
-                    db.getPersonData().addPerson(def.getPersons()[a]);
+                for(int a = 0; a < def.getPersonList().length; a++) {
+                    db.getPersonData().addPerson(def.getPersonList()[a]);
                 }
 
-                for(int b = 0; b < def.getEvents().length; b++) {
-                    db.getEventData().addEvent(def.getEvents()[b]);
+                for(int b = 0; b < def.getEventList().length; b++) {
+                    db.getEventData().addEvent(def.getEventList()[b]);
                 }
 
                 logger.log(Level.INFO, "Finished adding data from Fill Request.");
+                persons = def.getPersonList().length;
+                events = def.getEventList().length;
+
                 db.closeConnection(true);
-                persons = def.getPersons().length;
-                events = def.getEvents().length;
             }
         } catch (DataAccessException e) {
-            try {
-                db.closeConnection(false);
-            } catch (DataAccessException ex) {
-                ex.printStackTrace();
-            }
+            db.closeConnection(false);
             logger.log(Level.SEVERE, e.getLocalizedMessage());
             return new Result(String.format("Fill failed. : %s", e.getLocalizedMessage()));
         }

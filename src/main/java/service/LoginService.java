@@ -30,14 +30,14 @@ public class LoginService {
             } catch (DataAccessException e) {
                 db.closeConnection(false);
                 logger.log(Level.WARNING, e.getLocalizedMessage());
-                return new AuthResult("Login failed : User not registered.");
+                return new AuthResult("Error : User not registered.");
             }
 
             //Check if passwords match.
             if(!entry.getPassword().equals(lr.getPassword())) {
                 logger.log(Level.WARNING, "Passwords did not match.");
                 db.closeConnection(false);
-                return new AuthResult("Login failed : The password entered did not match the password on file.");
+                return new AuthResult("Error : The password entered did not match the password on file.");
             }
 
             //Generate a new AuthToken with the userName and personID.
@@ -49,13 +49,9 @@ public class LoginService {
             logger.log(Level.INFO, "Exiting login.");
             return new AuthResult(a);
         } catch (DataAccessException notFound) {
-            try {
-                db.closeConnection(false);
-            } catch (DataAccessException e) {
-                e.printStackTrace();
-            }
+            db.closeConnection(false);
             logger.log(Level.SEVERE, notFound.getLocalizedMessage());
-            return new AuthResult(String.format("Login failed : %s", notFound.getLocalizedMessage()));
+            return new AuthResult(String.format("Error : %s", notFound.getLocalizedMessage()));
         }
     }
 }

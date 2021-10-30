@@ -1,11 +1,11 @@
 package server;
 
-
 import java.io.*;
 import java.net.HttpURLConnection;
 
 import request.PersonRequest;
 import result.*;
+import service.EventService;
 import service.PersonService;
 
 import com.sun.net.httpserver.*;
@@ -35,6 +35,15 @@ public class PersonHandler implements HttpHandler {
                         //Check to see if the request info is valid.
                         if(validateRequestInfo(pr)) {
                             PersonResult res = new PersonService().getPerson(pr);
+                            if (res.getMessage() != null) {
+                                exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+
+                                OutputStream respBody = exch.getResponseBody();
+                                OutputStreamWriter out = new OutputStreamWriter(respBody);
+                                out.write(json.ObjectToJSON(res));
+                                out.flush();
+                                respBody.close();
+                            }
                             exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                             OutputStream respBody = exch.getResponseBody();
                             OutputStreamWriter out = new OutputStreamWriter(respBody);
@@ -50,6 +59,15 @@ public class PersonHandler implements HttpHandler {
                         //Check to see if the request info is valid.
                         if(validateRequestInfo(pr)) {
                             PersonResult res = new PersonService().getAll(pr);
+                            if (res.getMessage() != null) {
+                                exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+
+                                OutputStream respBody = exch.getResponseBody();
+                                OutputStreamWriter out = new OutputStreamWriter(respBody);
+                                out.write(json.ObjectToJSON(res));
+                                out.flush();
+                                respBody.close();
+                            }
                             exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                             OutputStream respBody = exch.getResponseBody();
                             OutputStreamWriter out = new OutputStreamWriter(respBody);
@@ -57,11 +75,19 @@ public class PersonHandler implements HttpHandler {
                             out.flush();
                             respBody.close();
                             success = true;
+                        }else{
+                            PersonResult res = new PersonService().getAll(pr);
+                            exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                            OutputStream respBody = exch.getResponseBody();
+                            OutputStreamWriter out = new OutputStreamWriter(respBody);
+                            out.write(json.ObjectToJSON(res));
+                            out.flush();
+                            respBody.close();
                         }
                     }
                 }
-            }
 
+            }
             if(!success) {
                 exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 if(error != null) {
@@ -80,9 +106,8 @@ public class PersonHandler implements HttpHandler {
 
     /**Check that the request info is valid. Return true if it is, and false if there is a mistake.*/
     private boolean validateRequestInfo(PersonRequest pr) {
-        if(pr.getAuthTokenID().isEmpty()) { error = new Result("AuthToken empty"); return false; }
+        if(pr.getAuthTokenID().isEmpty()) { error = new Result("Error: Invalid auth token"); return false; }
 
-        //At this point everything checks out.
         return true;
     }
 }

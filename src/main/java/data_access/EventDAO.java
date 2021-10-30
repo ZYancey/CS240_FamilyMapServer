@@ -2,21 +2,14 @@ package data_access;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.logging.*;
 
 import model.Event;
-
 public class EventDAO {
-    
     public EventDAO(Connection c) {
         setConnection(c);
     }
-
     private Connection c;
-
-    
     public void setConnection(Connection c) { this.c = c; }
-
     public Connection getConnection() { return c; }
 
     
@@ -57,12 +50,12 @@ public class EventDAO {
         PreparedStatement stmt = null;
         try {
             try {
-                String sql = "UPDATE event SET personID=?, AssociatedUsername=?, latitude=?, longitude=?, country=?, city=?, eventType=?, year=? WHERE eventID=?;";
+                String sql = "UPDATE event SET  AssociatedUsername=?, PersonID=?, Latitude=?, Longitude=?, Country=?, City=?, EventType=?, Year=? WHERE EventID=?;";
                 stmt = c.prepareStatement(sql);
 
                 //Fill the statement with the Event parameters.
-                stmt.setString(1, event.getPersonID());
-                stmt.setString(2, event.getUsername());
+                stmt.setString(1, event.getUsername());
+                stmt.setString(2, event.getPersonID());
                 stmt.setFloat(3, event.getLatitude());
                 stmt.setFloat(4, event.getLongitude());
                 stmt.setString(5, event.getCountry());
@@ -88,7 +81,7 @@ public class EventDAO {
         PreparedStatement stmt = null;
         try {
             try {
-                String sql = "DELETE FROM event WHERE eventID = ?;";
+                String sql = "DELETE FROM event WHERE EventID = ?;";
                 stmt = c.prepareStatement(sql);
 
                 stmt.setString(1, event.getEventID());
@@ -131,22 +124,22 @@ public class EventDAO {
         PreparedStatement stmt = null;
         try {
             try {
-                String sql = "SELECT * FROM event WHERE eventID = ?;";
+                String sql = "SELECT * FROM event WHERE EventID = ?;";
                 stmt = c.prepareStatement(sql);
 
                 stmt.setString(1, eventID);
 
                 ResultSet rs = stmt.executeQuery();
                 return new Event(
-                        rs.getString("eventID"),
-                        rs.getString("personID"),
+                        rs.getString("EventID"),
                         rs.getString("AssociatedUsername"),
-                        rs.getFloat("latitude"),
-                        rs.getFloat("longitude"),
-                        rs.getString("country"),
-                        rs.getString("city"),
-                        rs.getString("eventType"),
-                        rs.getInt("year"));
+                        rs.getString("PersonID"),
+                        rs.getFloat("Latitude"),
+                        rs.getFloat("Longitude"),
+                        rs.getString("Country"),
+                        rs.getString("City"),
+                        rs.getString("EventType"),
+                        rs.getInt("Year"));
             }
             finally {
                 if(stmt != null) {
@@ -174,16 +167,16 @@ public class EventDAO {
                 //Iterate over the ResultSet to construct Event objects and add them to the Set to be returned.
                 ArrayList<Event> res = new ArrayList<Event>();
                 while(rs.next()) {
-                    String eID = rs.getString("eventID");
-                    String pID = rs.getString("personID");
-                    String desc = rs.getString("AssociatedUsername");
-                    float lati = rs.getFloat("latitude");
-                    float longi = rs.getFloat("longitude");
-                    String country = rs.getString("country");
-                    String city = rs.getString("city");
-                    String eT = rs.getString("eventType");
-                    int year = rs.getInt("year");
-                    res.add(new Event(eID, pID, desc, lati, longi, country, city, eT, year));
+                    String EventID = rs.getString("EventID");
+                    String PersonID = rs.getString("PersonID");
+                    String Username = rs.getString("AssociatedUsername");
+                    float   Latitude = rs.getFloat("Latitude");
+                    float   Longitude = rs.getFloat("Longitude");
+                    String Country = rs.getString("Country");
+                    String City = rs.getString("City");
+                    String EventType = rs.getString("EventType");
+                    int    Year = rs.getInt("Year");
+                    res.add(new Event(EventID,PersonID,Username,Latitude,Longitude,Country,City,EventType,Year));
                 }
                 //For some reason it won't let me just do the toArray() function and cast as an Event[].....
                 Event[] all = new Event[res.size()];
@@ -200,7 +193,6 @@ public class EventDAO {
             throw new DataAccessException(String.format("Get All event failed. : %s", err.getLocalizedMessage()));
         }
     }
-
 
     public void clearTables() throws DataAccessException {
         try (Statement stmt = c.createStatement()){

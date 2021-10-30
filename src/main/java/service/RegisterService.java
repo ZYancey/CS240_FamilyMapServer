@@ -19,14 +19,14 @@ public class RegisterService {
     public AuthResult register(RegisterRequest request){
         System.out.println("REGISTER Service Entered");
         Database tempDB = new Database();
-        Person person = new Person(UUID.randomUUID().toString(),
-                request.getUsername(),
-                request.getFirstName(),
+        Person person = new Person(request.getFirstName(),
                 request.getLastName(),
                 request.getGender(),
+                UUID.randomUUID().toString(),
                 "",
                 "",
-                "");
+                "",
+                request.getUsername());
         User user = new User(request.getUsername(),
                 request.getPassword(),
                 request.getEmail(),
@@ -43,25 +43,25 @@ public class RegisterService {
 
             tempDB.getUserData().addUser(user);
 
-            System.out.println("ATTEMPTING TO CREATE TREE DATA");
-            //TODO GENERATE FAKE FAMILY TREE DATA HERE
+            DataGenerator data = new DataGenerator();
+            //Make a fake LoadRequest object just to get the data back from the DataGenerator.
+            ListResult lr = data.GenerateDefaultAncestorData(person);
+            for(int i = 0; i < lr.getPersonList().length; i++) {
+                tempDB.getPersonData().addPerson(lr.getPersonList()[i]);
+            }
+
+            for(int j = 0; j < lr.getEventList().length; j++) {
+                tempDB.getEventData().addEvent(lr.getEventList()[j]);
+            }
 
             tempDB.closeConnection(true);
-
             LoginService loginService = new LoginService();
             return loginService.login(new LoginRequest(request.getUsername(), request.getPassword()));
 
         }catch(DataAccessException e){
-
-            try {
-                tempDB.closeConnection(false);
-            } catch (DataAccessException ex) {
-                ex.printStackTrace();
-            }
-
-            return new AuthResult(String.format("Failed to register : %s", e.getLocalizedMessage()));
+            tempDB.closeConnection(false);
+            return new AuthResult(String.format("Error : %s", e.getLocalizedMessage()));
         }
-
     }
 
     private boolean verifyNewUser(Database tempDB, String username) {

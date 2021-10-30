@@ -8,16 +8,13 @@ public class PersonRequest {
     }
 
     private String AuthTokenID;
-
     private String personID;
 
 
 
     public void setAuthTokenID(String authTokenID) { AuthTokenID = authTokenID; }
-
     public void setPersonID(String personID) { this.personID = personID; }
 
     public String getAuthTokenID() { return AuthTokenID; }
-
     public String getPersonID() { return personID; }
 }

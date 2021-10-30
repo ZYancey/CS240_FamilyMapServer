@@ -3,32 +3,40 @@ package result;
 import model.Event;
 import model.Person;
 
-public class ListResult extends Result{
-    private Person[] persons;
-    private Event[] events;
-
-    public ListResult(Person[] persons, Event[] events){
-        setEvents(events);
-        setPersons(persons);
-    }
-    public ListResult(String listErr){
-        setMessage(listErr);
+public class ListResult extends Result {
+    /**Constructor for returning an array of Persons and an array of Events.
+     * @param p			the Person array to be returned
+     * @param e			the Event array to be returned*/
+    public ListResult(Person[] p, Event[] e) {
+        setPersonList(p);
+        setEventList(e);
     }
 
-
-    public void setEvents(Event[] events) {
-        this.events = events;
+    /**Constructor for an error PersonResult.
+     * @param error		the error message*/
+    public ListResult(String error) {
+        setMessage(error);
     }
 
-    public Event[] getEvents() {
-        return events;
-    }
+    /**The array of Persons to be returned.*/
+    private Person[] personList;
 
-    public void setPersons(Person[] persons) {
-        this.persons = persons;
-    }
+    /**The array of Events to be returned.*/
+    private Event[] eventList;
 
-    public Person[] getPersons() {
-        return persons;
-    }
+
+
+    /**Sets the array of Persons to be returned.
+     * @param pList		the Person array to be returned*/
+    public void setPersonList(Person[] pList) { this.personList = pList; }
+
+    /**Sets the array of Events to be returned.
+     * @param eList		the Event array to be returned*/
+    public void setEventList(Event[] eList) { this.eventList = eList; }
+
+    /**@return the Person array data*/
+    public Person[] getPersonList() { return personList; }
+
+    /**@return the Event array data*/
+    public Event[] getEventList() { return eventList; }
 }

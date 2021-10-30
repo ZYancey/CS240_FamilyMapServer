@@ -1,13 +1,12 @@
 package data_access;
 
+import model.Person;
+
 import java.sql.*;
 import java.util.ArrayList;
 
-import model.Person;
-import model.User;
-
-public class PersonDAO {
-    public PersonDAO(Connection c) {
+public class PersonDAOEXAM {
+    public PersonDAOEXAM(Connection c) {
         setConnection(c);
     }
     private Connection c;
@@ -21,8 +20,9 @@ public class PersonDAO {
                 String sql = "INSERT INTO person (PersonID, Username, FirstName, LastName, Gender, FatherID, MotherID, SpouseID) " +
                         "VALUES(?,?,?,?,?,?,?,?)";
                 stmt = c.prepareStatement(sql);
-
-                //Fill the statement with the Person parameters.
+                //Using the statements built-in set(type) functions we can pick the question mark we want
+                //to fill in and give it a proper value. The first argument corresponds to the first
+                //question mark found in our sql String
                 stmt.setString(1, person.getPersonID());
                 stmt.setString(2, person.getUsername());
                 stmt.setString(3, person.getFirstName());
@@ -31,7 +31,6 @@ public class PersonDAO {
                 stmt.setString(6, person.getFatherID());
                 stmt.setString(7, person.getMotherID());
                 stmt.setString(8, person.getSpouseID());
-
                 stmt.executeUpdate();
             }
             finally {
@@ -62,6 +61,7 @@ public class PersonDAO {
                 stmt.setString(7, person.getSpouseID());
                 stmt.setString(8, person.getPersonID());
 
+                //Execute the finalized statement.
                 stmt.executeUpdate();
             }
             finally {
@@ -75,15 +75,15 @@ public class PersonDAO {
         }
     }
 
-    public void deletePerson(Person p) throws DataAccessException {
+    public void deletePerson(Person person) throws DataAccessException {
         PreparedStatement stmt = null;
         try {
             try {
                 String sql = "DELETE FROM person WHERE PersonID = ?;";
                 stmt = c.prepareStatement(sql);
 
-                //Fill the statement with the Person's personID.
-                stmt.setString(1, p.getPersonID());
+                //Fill the statement with the Person's PersonID.
+                stmt.setString(1, person.getPersonID());
 
                 stmt.executeUpdate();
             }
@@ -115,18 +115,21 @@ public class PersonDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Delete all Persons failed. : %s", e.getLocalizedMessage()));
+            throw new DataAccessException(String.format("Delete all person failed. : %s", e.getLocalizedMessage()));
         }
     }
 
-    public Person getPerson(String personID) throws DataAccessException {
+    public Person getPerson(String PersonID) throws DataAccessException {
         PreparedStatement stmt = null;
         try {
             try {
                 String sql = "SELECT * FROM person WHERE PersonID = ?;";
                 stmt = c.prepareStatement(sql);
-                stmt.setString(1, personID);
 
+                //Fill the statement with the given PersonID.
+                stmt.setString(1, PersonID);
+
+                //Execute the query, and construct a new Person object from the data in the ResultSet.
                 ResultSet rs = stmt.executeQuery();
                 return new Person(
                         rs.getString("FirstName"),
@@ -156,7 +159,7 @@ public class PersonDAO {
                 String sql = "SELECT * FROM person WHERE Username=?;";
                 stmt = c.prepareStatement(sql);
 
-                //Fill the statement with the descendant's userName.
+                //Fill the statement with the Username's userName.
                 stmt.setString(1, Username);
 
                 //Execute the finalized query.
@@ -174,6 +177,7 @@ public class PersonDAO {
                     String MotherID = rs.getString("MotherID");
                     String SpouseID = rs.getString("SpouseID");
                     res.add(new Person(firstName, lastName, gender, person, SpouseID, FatherID, MotherID, username));
+                    //res.add(new Person(person, username, firstName, lastName, gender, FatherID, MotherID, SpouseID));
                 }
                 Person[] all = new Person[res.size()];
                 res.toArray(all);
@@ -186,7 +190,7 @@ public class PersonDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Get All Persons failed. : %s", e.getLocalizedMessage()));
+            throw new DataAccessException(String.format("Get All person failed. : %s", e.getLocalizedMessage()));
         }
     }
 

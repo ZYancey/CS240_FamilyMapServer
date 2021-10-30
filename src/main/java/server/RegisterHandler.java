@@ -26,6 +26,18 @@ public class RegisterHandler implements HttpHandler {
                 //Check to see if the request info is valid.
                 if(validateRequestBody(rr)) {
                     AuthResult ar = new RegisterService().register(rr);
+
+                    if (ar.getMessage() != null) {
+                        exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+
+                        OutputStream respBody = exch.getResponseBody();
+                        OutputStreamWriter out = new OutputStreamWriter(respBody);
+                        out.write(json.ObjectToJSON(ar));
+                        out.flush();
+                        respBody.close();
+                    }
+
+
                     exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                     OutputStream respBody = exch.getResponseBody();
                     OutputStreamWriter out = new OutputStreamWriter(respBody);

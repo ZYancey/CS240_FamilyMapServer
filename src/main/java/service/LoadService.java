@@ -46,20 +46,13 @@ public class LoadService {
             for(int k = 0; k < lr.getEventList().length; k++) {
                 db.getEventData().addEvent(lr.getEventList()[k]);
             }
+
+            db.closeConnection(true);
+
         } catch (DataAccessException e) {
-            try {
-                db.closeConnection(false);
-            } catch (DataAccessException ex) {
-                ex.printStackTrace();
-            }
+            db.closeConnection(false);
             logger.log(Level.SEVERE, e.getLocalizedMessage());
             return new Result(String.format("::Load:: Failed to load data : %s", e.getLocalizedMessage()));
-        }
-
-        try {
-            db.closeConnection(true);
-        } catch (DataAccessException e) {
-            e.printStackTrace();
         }
         logger.log(Level.FINE, String.format("Successfully added %s users, %s persons, and %s events to the database.", lr.getUserList().length, lr.getPersonList().length, lr.getEventList().length));
         logger.log(Level.INFO, "Exiting load.");

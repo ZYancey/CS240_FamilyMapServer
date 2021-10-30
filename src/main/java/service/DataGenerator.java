@@ -88,7 +88,7 @@ public class DataGenerator {
 
 
         //We make an assumption that the average user is between 1 and 30 years old, and use the user's "birth year" to start.
-        int childBirthYear = (CURRENT_YEAR - (rand.nextInt(30) + 1));
+        int childBirthYear = (CURRENT_YEAR - (rand.nextInt(10) + 18));
         generations = DEFAULT_GENERATIONS;
 
         AddNewGeneration(1, start, childBirthYear);
@@ -142,9 +142,11 @@ public class DataGenerator {
         child.setMotherID(motherID);
 
         //Generate a new Person as the father.
-        Person father = new Person(fatherID, child.getUsername(), men[rand.nextInt(men.length)], child.getLastName(), "M",  "", "", motherID);
+        Person father = new Person(men[rand.nextInt(men.length)], child.getLastName(), "M",  fatherID, motherID,"", "",  child.getUsername());
+        //Person father = new Person(fatherID, child.getUsername(), men[rand.nextInt(men.length)], child.getLastName(), "M",  "", "", motherID);
         //Generate a new Person as the mother.
-        Person mother = new Person(motherID, child.getUsername(), women[rand.nextInt(men.length)], last[rand.nextInt(last.length)], "F",  "", "", fatherID);
+        Person mother = new Person(women[rand.nextInt(men.length)], last[rand.nextInt(last.length)], "F",  motherID, fatherID,"", "",  child.getUsername());
+        //Person mother = new Person(motherID, child.getUsername(), women[rand.nextInt(men.length)], last[rand.nextInt(last.length)], "F",  "", "", fatherID);
         //Insert these Person objects into the database.
 
         GenerateAncestorEvents(father, mother, childBirthYear);

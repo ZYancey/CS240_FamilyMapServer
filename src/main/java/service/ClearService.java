@@ -24,20 +24,13 @@ public class ClearService {
             db.getEventData().clearTables();
             //User deletion.
             db.getUserData().clearTables();
+
+            db.closeConnection(true);
         } catch (DataAccessException e) {
-            try {
-                db.closeConnection(false);
-            } catch (DataAccessException ex) {
-                ex.printStackTrace();
-            }
+            db.closeConnection(false);
             return new Result("Clear failed");
         }
         //All deletions passed.
-        try {
-            db.closeConnection(true);
-        } catch (DataAccessException e) {
-            e.printStackTrace();
-        }
         return new Result("Clear succeeded.");
     }
 }
