@@ -7,14 +7,8 @@ import request.*;
 import model.*;
 import data_access.*;
 
-
-/**
- * Creates a new user account, generates 4 generations of ancestor data for the new user, logs the user in, and returns an auth token.
- */
 public class RegisterService {
     public RegisterService(){}
-    //private String message;
-    //private boolean success;
 
     public AuthResult register(RegisterRequest request){
         System.out.println("REGISTER Service Entered");
@@ -66,12 +60,7 @@ public class RegisterService {
 
     private boolean verifyNewUser(Database tempDB, String username) {
         try{
-            if(tempDB.getUserData().getUser(username) != null){
-                return false;
-            }
-            else{
-                return true;
-            }
+            return tempDB.getUserData().getUser(username) == null;
         }catch(DataAccessException e){
             return true;
         }

@@ -1,129 +1,125 @@
 package server;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import result.AuthResult;
+import result.EventResult;
+import result.PersonResult;
+
 import java.io.*;
-import com.google.gson.*;
-
-import result.*;
-
 
 
 public class JSONParser {
-    private Gson TempSon; //IDEK what to call this variable since it gets kinda confusing
-    private LocationData locations;
-    public JSONParser(){
+    public enum Names {
+        MALE_NAME, FEMALE_NAME, LAST_NAME
+    }
+
+    private final Gson TempSon; //IDEK what to call this variable since it gets kinda confusing
+
+
+
+    public JSONParser() {
         TempSon = new GsonBuilder().setPrettyPrinting().create();
     }
 
-    public String ObjectToJSON(Object o){
-        if(o.getClass() == PersonResult.class){
-            PersonResult personR = (PersonResult)o;
-            if(personR.getPerson() != null){
-                return TempSon.toJson(personR.getPerson());
+    public String ObjectToJSON(Object inputObj) {
+        if (inputObj.getClass() == PersonResult.class) {
+            PersonResult pResult = (PersonResult) inputObj;
+            if (pResult.getPerson() != null) {
+                return TempSon.toJson(pResult.getPerson());
             }
         }
-        if(o.getClass() == EventResult.class){
-            EventResult eventR = (EventResult) o;
-            if(eventR.getEvent() != null){
-                return TempSon.toJson(eventR.getEvent());
+        if (inputObj.getClass() == EventResult.class) {
+            EventResult eResult = (EventResult) inputObj;
+            if (eResult.getEvent() != null) {
+                return TempSon.toJson(eResult.getEvent());
             }
         }
-        if(o.getClass() == AuthResult.class){
-            AuthResult authR = (AuthResult) o;
-            if(authR.getAuthToken() != null){
-                return TempSon.toJson(authR.getAuthToken());
+        if (inputObj.getClass() == AuthResult.class) {
+            AuthResult aResult = (AuthResult) inputObj;
+            if (aResult.getAuthToken() != null) {
+                return TempSon.toJson(aResult.getAuthToken());
             }
         }
-        return TempSon.toJson(o);
+        return TempSon.toJson(inputObj);
     }
 
-    public <Object> Object JSONToObject(Reader reader, Class<Object> objectClass){
+    public <Object> Object JSONToObject(Reader reader, Class<Object> objectClass) {
         return TempSon.fromJson(reader, objectClass);
     }
 
-    public <Object> Object JSONToObject(String jsonString, Class<Object> objectClass){
-        return TempSon.fromJson(jsonString, objectClass);
+
+    public static class Location {
+        private String country;
+        private String city;
+        private float latitude;
+        private float longitude;
+
+
+        public String getCountry() {
+            return country;
+        }
+        public String getCity() {
+            return city;
+        }
+        public float getLatitude() {
+            return latitude;
+        }
+        public float getLongitude() {
+            return longitude;
+        }
+    }
+    public static class LocationData {
+        private Location[] data;
+    }
+    public static class StringList {
+        private String[] data;
     }
 
-    public String[] GetNames(Names type) throws IOException {
-        Reader reader = null;
-        String file;
-        switch(type) {
-            case MALE:		file = "json/mnames.json"; break;
-            case FEMALE:	file = "json/fnames.json"; break;
-            case SURNAME:	file = "json/snames.json"; break;
-            default:		file = "json/snames.json"; break;
+    public String[] GetNames(Names nameType) throws IOException {
+        Reader fReader = null;
+        String filePath;
+
+        switch (nameType) {
+            case MALE_NAME:
+                filePath = "json/mnames.json";
+                break;
+            case FEMALE_NAME:
+                filePath = "json/fnames.json";
+                break;
+            case LAST_NAME:
+                filePath = "json/snames.json";
+                break;
+            default:
+                filePath = "json/snames.json";
+                break;
         }
         try {
-            reader = new FileReader(new File(file));
-            return TempSon.fromJson(reader, StringList.class).data;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if(reader != null) {
-                reader.close();
+            fReader = new FileReader(new File(filePath));
+            return TempSon.fromJson(fReader, StringList.class).data;
+        } catch (FileNotFoundException excep) {
+            excep.printStackTrace();
+        } finally {
+            if (fReader != null) {
+                fReader.close();
             }
         }
         return null;
     }
 
-    /**Gets the list of locations to use when generating ancestor data.
-     * @return			an array of Location objects.*/
+
     public Location[] GetLocations() {
-        Reader reader;
+        Reader fReader;
         try {
-            reader = new FileReader(new File("json/locations.json"));
-            locations = TempSon.fromJson(reader, LocationData.class);
+            fReader = new FileReader(new File("json/locations.json"));
+            LocationData locations = TempSon.fromJson(fReader, LocationData.class);
             return locations.data;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException excep) {
+            excep.printStackTrace();
         }
         return null;
     }
 
-    /**This class is essentially a struct for the different parts of location information to be read in.*/
-    public class Location {
-        /**A String with the Location's country.*/
-        private String country;
 
-        /**A String with the Location's city.*/
-        private String city;
-
-        /**A double of the Location's latitude.*/
-        private float latitude;
-
-        /**A double of the Location's longitude.*/
-        private float longitude;
-
-
-
-        /**@return		the Location's country*/
-        public String getCountry() { return country; }
-
-        /**@return 		the Location's city*/
-        public String getCity() { return city; }
-
-        /**@return		the Location's latitude*/
-        public float getLatitude() { return latitude; }
-
-        /**@return		the Location's longitude*/
-        public float getLongitude() { return longitude; }
-    }
-
-    /**Essentially a struct for an array of Location objects.*/
-    public class LocationData {
-        /**An array of Location objects.*/
-        private Location[] data;
-    }
-
-    /**A wrapper class for a String[] to allow the JSON conversion for the names.*/
-    public class StringList {
-        private String[] data;
-    }
-
-    /**The types of names to be read and converted from JSON files.*/
-    public enum Names {
-        MALE, FEMALE, SURNAME
-    }
 }

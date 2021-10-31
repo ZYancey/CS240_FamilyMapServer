@@ -1,15 +1,19 @@
 package server;
 
-import java.io.*;
-import java.net.*;
-import com.sun.net.httpserver.*;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import request.RegisterRequest;
+import result.AuthResult;
+import result.Result;
+import service.RegisterService;
 
-import request.*;
-import result.*;
-import service.*;
+import java.io.*;
+import java.net.HttpURLConnection;
 
 public class RegisterHandler implements HttpHandler {
-    /**A generic Result to be returned in the event of an error.*/
+    /**
+     * A generic Result to be returned in the event of an error.
+     */
     private Result err;
 
     /**The handler to register a user with the server.*/
@@ -63,27 +67,33 @@ public class RegisterHandler implements HttpHandler {
         }
     }
 
-    private boolean validateRequestBody(RegisterRequest request){
-        if(request.getUsername().isEmpty()) {
+    private boolean validateRequestBody(RegisterRequest request) {
+        if (request.getUsername().isEmpty()) {
             err = new AuthResult("Username empty");
-            return false; }
-        if(request.getPassword().isEmpty()) {
+            return false;
+        }
+        if (request.getPassword().isEmpty()) {
             err = new AuthResult("Password empty");
-            return false; }
-        if(request.getEmail().isEmpty()) {
+            return false;
+        }
+        if (request.getEmail().isEmpty()) {
             err = new AuthResult("Email empty");
-            return false; }
-        if(request.getFirstName().isEmpty()) {
+            return false;
+        }
+        if (request.getFirstName().isEmpty()) {
             err = new AuthResult("First name empty");
-            return false; }
-        if(request.getLastName().isEmpty()) {
+            return false;
+        }
+        if (request.getLastName().isEmpty()) {
             err = new AuthResult("Last name empty");
-            return false; }
+            return false;
+        }
 
         String tempGender = request.getGender().toUpperCase();
-        if(!tempGender.equals("M") && !tempGender.equals("F")) {
+        if (!tempGender.equals("M") && !tempGender.equals("F")) {
             err = new AuthResult("Gender invalid");
-            return false; }
+            return false;
+        }
 
         return true;
     }

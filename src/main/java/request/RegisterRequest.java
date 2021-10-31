@@ -1,13 +1,13 @@
 package request;
 
 public class RegisterRequest {
-    private String username;
-    private String password;
-    private String email;
-    private String firstName;
-    private String lastName;
+    private final String username;
+    private final String password;
+    private final String email;
+    private final String firstName;
+    private final String lastName;
     private String gender;
-    private String personID;
+    private final String personID;
 
 
     public RegisterRequest(String username,

@@ -1,6 +1,5 @@
 package request;
 
-/**The class that defines requests for Person objects with the server.*/
 public class PersonRequest {
     public PersonRequest(String auth, String person) {
         setAuthTokenID(auth);
@@ -9,8 +8,6 @@ public class PersonRequest {
 
     private String AuthTokenID;
     private String personID;
-
-
 
     public void setAuthTokenID(String authTokenID) { AuthTokenID = authTokenID; }
     public void setPersonID(String personID) { this.personID = personID; }

@@ -2,7 +2,7 @@ package dao;
 
 import data_access.DataAccessException;
 import data_access.Database;
-import data_access.EventDAOEX;
+import data_access.EventDAO;
 import model.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EventDAOTest {
     private Database db;
     private Event bestEvent;
-    private EventDAOEX eDao;
+    private EventDAO eDao;
 
     @BeforeEach
     public void setUp() throws DataAccessException
@@ -33,7 +33,7 @@ public class EventDAOTest {
         //Let's clear the database as well so any lingering data doesn't affect our tests
         db.clearTables();
         //Then we pass that connection to the EventDAO so it can access the database
-        eDao = new EventDAOEX(conn);
+        eDao = new EventDAO(conn);
     }
 
     @AfterEach

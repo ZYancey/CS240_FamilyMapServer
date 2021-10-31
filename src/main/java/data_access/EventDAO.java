@@ -46,37 +46,6 @@ public class EventDAO {
         }
     }
 
-    public void modifyEvent(Event event) throws DataAccessException {
-        PreparedStatement stmt = null;
-        try {
-            try {
-                String sql = "UPDATE event SET  AssociatedUsername=?, PersonID=?, Latitude=?, Longitude=?, Country=?, City=?, EventType=?, Year=? WHERE EventID=?;";
-                stmt = c.prepareStatement(sql);
-
-                //Fill the statement with the Event parameters.
-                stmt.setString(1, event.getUsername());
-                stmt.setString(2, event.getPersonID());
-                stmt.setFloat(3, event.getLatitude());
-                stmt.setFloat(4, event.getLongitude());
-                stmt.setString(5, event.getCountry());
-                stmt.setString(6, event.getCity());
-                stmt.setString(7, event.getEventType());
-                stmt.setInt(8, event.getYear());
-                stmt.setString(9, event.getEventID());
-
-                stmt.executeUpdate();
-            }
-            finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
-                }
-            }
-        } catch (SQLException err) {
-            throw new DataAccessException(String.format("Modify Event failed. : %s", err.getLocalizedMessage()));
-        }
-    }
-
     public void deleteEvent(Event event) throws DataAccessException {
         PreparedStatement stmt = null;
         try {
@@ -96,27 +65,6 @@ public class EventDAO {
             }
         } catch (SQLException err) {
             throw new DataAccessException(String.format("Delete Event failed. : %s", err.getLocalizedMessage()));
-        }
-    }
-
-    public void deleteAllEvents() throws DataAccessException {
-        PreparedStatement stmt = null;
-        try {
-            try {
-                String sql = "DELETE FROM event;";
-                stmt = c.prepareStatement(sql);
-
-                stmt.executeUpdate();
-            }
-            finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
-                }
-            }
-        } catch (SQLException err) {
-            System.out.println("Delete All event failed.");
-            throw new DataAccessException(String.format("Delete all event failed. : %s", err.getLocalizedMessage()));
         }
     }
 

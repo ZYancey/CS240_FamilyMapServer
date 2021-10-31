@@ -4,8 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import model.Person;
-import model.User;
-
 public class PersonDAO {
     public PersonDAO(Connection c) {
         setConnection(c);
@@ -45,36 +43,6 @@ public class PersonDAO {
         }
     }
 
-    public void modifyPerson(Person person) throws DataAccessException {
-        PreparedStatement stmt = null;
-        try {
-            try {
-                String sql = "UPDATE person SET Username=?, FirstName=?, LastName=?, Gender=?, FatherID=?, MotherID=?, SpouseID=? WHERE PersonID=?;";
-                stmt = c.prepareStatement(sql);
-
-                //Fill the statement with the Person parameters.
-                stmt.setString(1, person.getUsername());
-                stmt.setString(2, person.getFirstName());
-                stmt.setString(3, person.getLastName());
-                stmt.setString(4, person.getGender());
-                stmt.setString(5, person.getFatherID());
-                stmt.setString(6, person.getMotherID());
-                stmt.setString(7, person.getSpouseID());
-                stmt.setString(8, person.getPersonID());
-
-                stmt.executeUpdate();
-            }
-            finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Modify Person failed. : %s", e.getLocalizedMessage()));
-        }
-    }
-
     public void deletePerson(Person p) throws DataAccessException {
         PreparedStatement stmt = null;
         try {
@@ -95,27 +63,6 @@ public class PersonDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Delete Person failed. : %s", e.getLocalizedMessage()));
-        }
-    }
-
-    public void deleteAllPersons() throws DataAccessException {
-        PreparedStatement stmt = null;
-        try {
-            try {
-                String sql = "DELETE FROM person;";
-                stmt = c.prepareStatement(sql);
-
-                //No extra parameters to add to the statement, so proceed to execution.
-                stmt.executeUpdate();
-            }
-            finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Delete all Persons failed. : %s", e.getLocalizedMessage()));
         }
     }
 

@@ -4,12 +4,11 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
-import java.io.File;
 import java.util.Objects;
 
 public class FileHandler implements HttpHandler {
@@ -19,10 +18,10 @@ public class FileHandler implements HttpHandler {
         boolean success = false;
 
         try {
-            if (exchange.getRequestMethod().toLowerCase().equals("get")) {
+            if (exchange.getRequestMethod().equalsIgnoreCase("get")) {
                 Headers reqHeaders = exchange.getRequestHeaders();
                 String urlPath = exchange.getRequestURI().toString();
-                if(Objects.equals(urlPath, "") || Objects.equals(urlPath, "/")){
+                if (Objects.equals(urlPath, "") || Objects.equals(urlPath, "/")) {
                     System.out.println("\"" + urlPath + "\" converted to index.html");
                     urlPath = "/index.html";
                 }
@@ -32,7 +31,7 @@ public class FileHandler implements HttpHandler {
 
                 OutputStream respBody = exchange.getResponseBody();
 
-                if(!file.exists()){
+                if (!file.exists()) {
                     System.out.println("~~~~~404~~~~~~");
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
 
@@ -43,14 +42,11 @@ public class FileHandler implements HttpHandler {
                     exchange.getResponseBody().close();
                     respBody.close();
 
-                }else{
+                } else {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                     Files.copy(file.toPath(), respBody);
                     System.out.println("\t" + filePath + " served to user.");
                 }
-
-
-
 
 
                 // Close the output stream.  This is how Java knows we are done
@@ -63,8 +59,7 @@ public class FileHandler implements HttpHandler {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 exchange.getResponseBody().close();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // Some kind of internal error has occurred inside the server (not the
             // client's fault), so we return an "internal server error" status code
             // to the client.

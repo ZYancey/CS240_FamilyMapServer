@@ -1,14 +1,14 @@
 package server;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-
-import data_access.DataAccessException;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import request.LoginRequest;
-import result.*;
+import result.AuthResult;
+import result.Result;
 import service.LoginService;
 
-import com.sun.net.httpserver.*;
+import java.io.*;
+import java.net.HttpURLConnection;
 
 public class LoginHandler implements HttpHandler {
     private Result error;
@@ -19,11 +19,10 @@ public class LoginHandler implements HttpHandler {
         JSONParser json = new JSONParser();
 
         try {
-            if (exch.getRequestMethod().toUpperCase().equals("POST")) {
+            if (exch.getRequestMethod().equalsIgnoreCase("POST")) {
                 InputStream reqBody = exch.getRequestBody();
                 InputStreamReader in = new InputStreamReader(reqBody);
                 LoginRequest lr = json.JSONToObject(in, LoginRequest.class);
-
                 if (validateRequestInfo(lr)) {
                     AuthResult ar = new LoginService().login(lr);
 

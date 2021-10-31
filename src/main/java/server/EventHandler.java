@@ -1,26 +1,34 @@
 package server;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import request.EventRequest;
-import result.*;
+import result.EventResult;
+import result.Result;
 import service.EventService;
 
-import com.sun.net.httpserver.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 
 public class EventHandler implements HttpHandler {
-    /**A general Result object to return in the event of an error.*/
+    /**
+     * A general Result object to return in the event of an error.
+     */
     private Result error;
 
-    /**The handler to call for an Event or an array of Events.*/
+    /**
+     * The handler to call for an Event or an array of Events.
+     */
     public void handle(HttpExchange exch) throws IOException {
         boolean success = false;
         JSONParser json = new JSONParser();
 
         try {
             //Accept only GET methods.
-            if(exch.getRequestMethod().toUpperCase().equals("GET")) {
+            if (exch.getRequestMethod().equalsIgnoreCase("GET")) {
                 Headers reqHeaders = exch.getRequestHeaders();
                 //Accept only requests with an Authorization header.
                 if (reqHeaders.containsKey("Authorization")) {
@@ -29,10 +37,10 @@ public class EventHandler implements HttpHandler {
                     //Determine which service the request is calling for.
                     String[] params = exch.getRequestURI().toString().split("/");
                     //Return a singular Event.
-                    if(params.length == 3) {
+                    if (params.length == 3) {
                         er = new EventRequest(authToken, params[2]);
                         //Check to see if the request info is valid.
-                        if(validateRequestInfo(er)) {
+                        if (validateRequestInfo(er)) {
                             EventResult res = new EventService().getEvent(er);
                             if (res.getMessage() != null) {
                                 exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
@@ -56,7 +64,7 @@ public class EventHandler implements HttpHandler {
                     else {
                         er = new EventRequest(authToken, "");
                         //Check to see if the request info is valid.
-                        if(validateRequestInfo(er)) {
+                        if (validateRequestInfo(er)) {
                             EventResult res = new EventService().getAll(er);
                             if (res.getMessage() != null) {
                                 exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
@@ -74,7 +82,7 @@ public class EventHandler implements HttpHandler {
                             out.flush();
                             respBody.close();
                             success = true;
-                        }else{
+                        } else {
                             EventResult res = new EventService().getAll(er);
                             exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                             OutputStream respBody = exch.getResponseBody();
@@ -103,9 +111,14 @@ public class EventHandler implements HttpHandler {
         }
     }
 
-    /**Check that the request info is valid. Return true if it is, and false if there is a mistake.*/
+    /**
+     * Check that the request info is valid. Return true if it is, and false if there is a mistake.
+     */
     private boolean validateRequestInfo(EventRequest er) {
-        if(er.getAuthTokenID().isEmpty()) { error = new Result("Error: bad auth"); return false; }
+        if (er.getAuthTokenID().isEmpty()) {
+            error = new Result("Error: bad auth");
+            return false;
+        }
 
         //At this point everything checks out.
         return true;

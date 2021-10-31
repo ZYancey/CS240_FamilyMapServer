@@ -1,19 +1,15 @@
 package data_access;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Database {
     private Connection conn;
-    private AuthTokenDAO AuthData;
-    private UserDAO UserData;
-    private EventDAO EventData;
-    private PersonDAO PersonData;
+    private final AuthTokenDAO AuthData;
+    private final UserDAO UserData;
+    private final EventDAO EventData;
+    private final PersonDAO PersonData;
 
     public Database(){
-        System.out.println("CONSTRUCTING DAOS");
         try {
             getConnection();
         } catch (DataAccessException e) {
@@ -23,17 +19,6 @@ public class Database {
         UserData = new UserDAO(conn);
         EventData = new EventDAO(conn);
         PersonData = new PersonDAO(conn);
-    }
-
-    public void setConnection() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:familymap.sqlite");
-            //Prevent changes from auto-committing.
-            conn.setAutoCommit(false);
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
     }
 
     //Whenever we want to make a change to our database we will have to open a connection and use
@@ -46,8 +31,6 @@ public class Database {
 
             // Open a database connection to the file given in the path
             conn = DriverManager.getConnection(CONNECTION_URL);
-
-            // Start a transaction
             conn.setAutoCommit(false);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,45 +68,13 @@ public class Database {
                 if(!commit) { conn.rollback(); }
                 conn.close();
                 conn = null;
-                //logger.log(Level.FINER, "Database connection closed.");
             } catch (SQLException e) {
                 throw new DataAccessException("closeConnection failed");
             }
         } catch (DataAccessException close) {
-            //logger.log(Level.SEVERE, close.getMessage());
-            //logger.log(Level.SEVERE, close.getLocalizedMessage());
-        }
-    }
-
-
-    /*
-
-    public void closeConnection(boolean commit) throws DataAccessException {
-        System.out.println("\tDATABASE: Attempting to Close Connection");
-        try {
-            if (commit) {
-                //This will commit the changes to the database
-                conn.commit();
-            } else {
-                //If we find out something went wrong, pass a false into closeConnection and this
-                //will rollback any changes we made during this connection
-                conn.rollback();
-            }
-
-            conn.close();
-            conn = null;
-            System.out.println("success");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("FAILURE");
-            throw new DataAccessException("Unable to close database connection");
 
         }
     }
-
-    */
-
-
     public void clearTables() throws DataAccessException {
         try (Statement stmt = conn.createStatement()){
             String sql = "DELETE FROM event";
@@ -136,7 +87,5 @@ public class Database {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
     }
-
-
 }
 

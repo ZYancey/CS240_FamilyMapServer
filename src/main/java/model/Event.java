@@ -12,17 +12,6 @@ public class Event {
     private Integer year;
     Boolean success = true;
 
-    /**
-     * @param eventID ID of Event
-     * @param username the username of the user
-     * @param personID the ID of the user
-     * @param latitude latitude of the event
-     * @param longitude longitude of the event
-     * @param country country of event
-     * @param city city of event
-     * @param eventType type of event
-     * @param year year of event
-     */
     public Event(String eventID,
                  String username,
                  String personID,
@@ -46,68 +35,32 @@ public class Event {
     }
 
 
-    public String getEventID() {
-        return eventID;
-    }
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
-    }
+    public String getEventID() { return eventID; }
+    public void setEventID(String eventID) { this.eventID = eventID; }
 
-    public String getUsername() {
-        return associatedUsername;
-    }
-    public void setUsername(String username) {
-        this.associatedUsername = username;
-    }
+    public String getUsername() { return associatedUsername; }
+    public void setUsername(String username) { this.associatedUsername = username; }
 
-    public String getPersonID() {
-        return personID;
-    }
-    public void setPersonID(String personID) {
-        this.personID = personID;
-    }
+    public String getPersonID() { return personID; }
+    public void setPersonID(String personID) { this.personID = personID;}
 
-    public Float getLatitude() {
-        return latitude;
-    }
-    public void setLatitude(Float latitude) {
-        this.latitude = latitude;
-    }
+    public Float getLatitude() { return latitude; }
+    public void setLatitude(Float latitude) { this.latitude = latitude; }
 
-    public Float getLongitude() {
-        return longitude;
-    }
-    public void setLongitude(Float longitude) {
-        this.longitude = longitude;
-    }
+    public Float getLongitude() { return longitude; }
+    public void setLongitude(Float longitude) { this.longitude = longitude; }
 
-    public String getCountry() {
-        return country;
-    }
-    public void setCountry(String country) {
-        this.country = country;
-    }
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
 
-    public String getCity() {
-        return city;
-    }
-    public void setCity(String city) {
-        this.city = city;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public String getEventType() {
-        return eventType;
-    }
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType;}
 
-    public Integer getYear() {
-        return year;
-    }
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 
     @Override
     public boolean equals(Object o) {
