@@ -30,13 +30,13 @@ public class RegisterServiceTest {
 
 	@Test
 	public void testRegister() {
-		RegisterRequest rr = new RegisterRequest("user",
-				"pass",
-				"em@il.com",
-				"Name",
-				"Last",
+		RegisterRequest rr = new RegisterRequest("peter",
+				"ae",
+				"s@s.com",
+				"Ha",
+				"Pr",
 				"M",
-				"personID");
+				"ID");
 		AuthResult ar = rs.register(rr);
 		assertEquals(rr.getUsername(), ar.getAuthToken().getUserName());
 	}

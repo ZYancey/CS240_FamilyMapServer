@@ -35,11 +35,11 @@ public class EventServiceTest {
 	@Test
 	public void testGetAll() {
 		RegisterRequest req = new RegisterRequest(
-				"gMonster",
-				"gremlins",
-				"dumblydore@hogwarts.edu",
-				"Albus",
-				"Dumbledore",
+				"user",
+				"pass",
+				"em@hs.edu",
+				"fir",
+				"las",
 				"M",
 				"ID");
 		AuthResult ar = new RegisterService().register(req);

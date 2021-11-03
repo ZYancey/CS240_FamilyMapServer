@@ -33,20 +33,20 @@ public class LoginServiceTest {
 
 	@Test
 	public void testLogin() {
-		LoginRequest req = new LoginRequest("dMonster", "pass");
+		LoginRequest req = new LoginRequest("uzer", "pass");
 		AuthResult res = ls.login(req);
 		assertEquals("Error : User not registered.", res.getMessage());
 		
 		Database db = new Database();
 		try {
-			db.getUserData().addUser(new model.User("dMonster", "pass", "clarky@apple.com", "Clark", "Green", "M", "cani"));
+			db.getUserData().addUser(new model.User("user", "pass", "cl@a.com", "na", "la", "M", "pid"));
 			db.closeConnection(true);
 		} catch (DataAccessException e) {
 			db.closeConnection(false);
 			System.out.println("Add for Login Test failed.");
 			e.printStackTrace();
 		}
-		LoginRequest req2 = new LoginRequest("dMonster", "pass"); 
+		LoginRequest req2 = new LoginRequest("user", "pass");
 		AuthResult check2 = ls.login(req2);
 		if(req2.getUsername() == null) { System.out.println("REQ2"); }
 		if(check2 == null) { System.out.println("RESULT"); }
