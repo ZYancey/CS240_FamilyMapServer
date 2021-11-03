@@ -63,11 +63,11 @@ public class Event {
     public void setYear(Integer year) { this.year = year; }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null)
+    public boolean equals(Object obj) {
+        if (obj == null)
             return false;
-        if (o instanceof Event) {
-            Event oEvent = (Event) o;
+        if (obj instanceof Event) {
+            Event oEvent = (Event) obj;
             return oEvent.getEventID().equals(getEventID()) &&
                     oEvent.getUsername().equals(getUsername()) &&
                     oEvent.getPersonID().equals(getPersonID()) &&

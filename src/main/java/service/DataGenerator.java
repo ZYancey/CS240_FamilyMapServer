@@ -17,47 +17,39 @@ public class DataGenerator {
 
     public DataGenerator() {
         rand = new Random();
-        personList = new ArrayList<Person>();
-        eventList = new ArrayList<Event>();
+        personList = new ArrayList<>();
+        eventList = new ArrayList<>();
     }
-
-
 
     private static final int DEFAULT_GENERATIONS = 4;
     private static final int CURRENT_YEAR = 2021;
     private static final int MIN_MARRIAGE_AGE = 18;
-    private static final int MIN_BAPTISM_AGE = 8;
-    private static final int MAX_PARENT_AGE = 32;
+    private static final int MIN_GRADUATION_AGE = 16;
     private static final int MAX_AGE = 100;
 
     private int generations = 0;
     private final Random rand;
 
-    /**A list of names to pull from when creating ancestors.*/
     private String[] men;
     private String[] women;
     private String[] last;
-    /**A list of locations to pull from when creating events for ancestors.*/
     private Location[] locations;
 
     private int fatherBirthYear;
     private int motherBirthYear;
-    private int fatherBaptismYear;
-    private int motherBaptismYear;
+    private int fatherGradYear;
+    private int motherGradYear;
     private int marriageYear;
+    private int currentGen = 1;
 
     private final ArrayList<Person> personList;
     private final ArrayList<Event> eventList;
 
 
 
-    /**Generate Persons and Events for the default number of generations.
-     * @param start				the start of the family tree that will be made, which is usually the Person object for the current User.
-     * @return 					a ListResult containing the arrays of Persons and Events that are made.*/
     public ListResult GenerateDefaultAncestorData(Person start)   {
         JSONParser j = new JSONParser();
         try {
-            //Get the list of possible names for the Persons we will generate.
             men = j.GetNames(Names.MALE_NAME);
             women = j.GetNames(Names.FEMALE_NAME);
             last = j.GetNames(Names.LAST_NAME);
@@ -66,11 +58,11 @@ public class DataGenerator {
         }
 
 
-        //We make an assumption that the average user is between 1 and 30 years old, and use the user's "birth year" to start.
+
         int childBirthYear = (CURRENT_YEAR - (rand.nextInt(10) + 18));
         generations = DEFAULT_GENERATIONS;
 
-        AddNewGeneration(1, start, childBirthYear);
+        AddNewGeneration(1, start);
         personList.add(start);
         GenerateUserEvents(start, childBirthYear);
         Person[] per = new Person[personList.size()];
@@ -78,11 +70,9 @@ public class DataGenerator {
         return new ListResult(personList.toArray(per), eventList.toArray(evt));
     }
 
-    /**Generate Persons and Events for the number of generations specified by the user.**/
     public ListResult GenerateAncestorData(Person start, int gen)   {
         JSONParser j = new JSONParser();
         try {
-            //Get the list of possible names for the Persons we will generate.
             men = j.GetNames(Names.MALE_NAME);
             women = j.GetNames(Names.FEMALE_NAME);
             last = j.GetNames(Names.LAST_NAME);
@@ -90,11 +80,10 @@ public class DataGenerator {
         } catch (IOException ignored) {
         }
 
-        //We make an assumption that the average user is between 1 and 30 years old, and use the user's "birth year" to start.
         int childBirthYear = (CURRENT_YEAR - (rand.nextInt(30) + 1));
         generations = gen;
 
-        AddNewGeneration(1, start, childBirthYear);
+        AddNewGeneration(1, start);
         personList.add(start);
         GenerateUserEvents(start, childBirthYear);
         Person[] per = new Person[personList.size()];
@@ -102,11 +91,14 @@ public class DataGenerator {
         return new ListResult(personList.toArray(per), eventList.toArray(evt));
     }
 
-    private void AddNewGeneration(int gen, Person child, int childBirthYear)   {
-        //Exit out of the function if we are past the number of generations that we should create.
-        if(gen > generations) { return; }
 
-        //Create ID's for the father and mother and assign them to the child.
+    private void AddNewGeneration(int gen, Person child)   {
+        if(gen > generations) { return; }
+        if (gen >=1){
+            currentGen = gen;
+        }
+
+
         String fatherID = UUID.randomUUID().toString();
         String motherID = UUID.randomUUID().toString();
         child.setFatherID(fatherID);
@@ -116,30 +108,28 @@ public class DataGenerator {
         Person father = new Person(men[rand.nextInt(men.length)], child.getLastName(), "M",  fatherID, motherID,"", "",  child.getUsername());
         Person mother = new Person(women[rand.nextInt(men.length)], last[rand.nextInt(last.length)], "F",  motherID, fatherID,"", "",  child.getUsername());
 
-        GenerateAncestorEvents(father, mother, childBirthYear);
+
+        GenerateAncestorEvents(father, mother);
 
         gen++;
-        //Create a new generation based off of the father and mother.
-        AddNewGeneration(gen, father, fatherBirthYear);
-        AddNewGeneration(gen, mother, motherBirthYear);
+
+        AddNewGeneration(gen, father);
+        AddNewGeneration(gen, mother);
 
         personList.add(father);
         personList.add(mother);
     }
 
-    private void GenerateAncestorEvents(Person father, Person mother, int childBirthYear)   {
-        GenerateBirthEvents(father, mother, childBirthYear);
-        GenerateBaptismEvents(father, mother);
+    private void GenerateAncestorEvents(Person father, Person mother)   {
+        GenerateBirthEvents(father, mother);
+        GenerateGradEvents(father, mother);
         GenerateMarriageEvent(father, mother);
         GenerateDeathEvents(father, mother);
     }
 
-    private void GenerateBirthEvents(Person father, Person mother, int childBirthYear)   {
-        do {
-            //Generate a random year by getting a random number between 0 and 32, adding 18, and subtracting from the child birth year.
-            //Keep doing until the father's birth was at least 18 years before the child.
-            fatherBirthYear = (childBirthYear - (rand.nextInt(MAX_PARENT_AGE) + MIN_MARRIAGE_AGE));
-        } while (fatherBirthYear > (childBirthYear - MIN_MARRIAGE_AGE) || fatherBirthYear < (childBirthYear - MAX_PARENT_AGE));
+    private void GenerateBirthEvents(Person father, Person mother)   {
+
+        fatherBirthYear = 2000 - (24*(currentGen));
 
         String fBirthID = UUID.randomUUID().toString();
         int fLocationIndex = rand.nextInt(locations.length);
@@ -156,11 +146,7 @@ public class DataGenerator {
                         fatherBirthYear
                 ));
 
-        do {
-            //Generate a random year by getting a random number between 0 and 32, adding 18, and subtracting from the child birth year.
-            //Keep doing until the mother's birth was at least 18 years before the child.
-            motherBirthYear = (childBirthYear - (rand.nextInt(MAX_PARENT_AGE) + MIN_MARRIAGE_AGE));
-        } while (motherBirthYear > (childBirthYear - MIN_MARRIAGE_AGE) || motherBirthYear < (childBirthYear - MAX_PARENT_AGE));
+        motherBirthYear = 2000 - (24*(currentGen));
 
         String mBirthID = UUID.randomUUID().toString();
         int mLocationIndex = rand.nextInt(locations.length);
@@ -178,43 +164,43 @@ public class DataGenerator {
                 ));
     }
 
-    private void GenerateBaptismEvents(Person father, Person mother)   {
+    private void GenerateGradEvents(Person father, Person mother)   {
         do {
-            fatherBaptismYear = (fatherBirthYear + rand.nextInt(MAX_AGE - MIN_BAPTISM_AGE) + MIN_BAPTISM_AGE);
-        } while ((fatherBaptismYear - fatherBirthYear) > MAX_AGE);
+            fatherGradYear = (fatherBirthYear + rand.nextInt(MAX_AGE - MIN_GRADUATION_AGE) + MIN_GRADUATION_AGE);
+        } while ((fatherGradYear - fatherBirthYear) > MAX_AGE);
 
-        String fBaptismID = UUID.randomUUID().toString();
+        String fGradID = UUID.randomUUID().toString();
         int fLocationIndex = rand.nextInt(locations.length);
         eventList.add(
                 new Event(
-                        fBaptismID,
+                        fGradID,
                         father.getUsername(),
                         father.getPersonID(),
                         locations[fLocationIndex].getLatitude(),
                         locations[fLocationIndex].getLongitude(),
                         locations[fLocationIndex].getCountry(),
                         locations[fLocationIndex].getCity(),
-                        "baptism",
-                        fatherBaptismYear
+                        "graduation",
+                        fatherGradYear
                 ));
 
         do {
-            motherBaptismYear = (motherBirthYear + rand.nextInt(MAX_AGE - MIN_BAPTISM_AGE) + MIN_BAPTISM_AGE);
-        } while ((motherBaptismYear - motherBirthYear) > MAX_AGE);
+            motherGradYear = (motherBirthYear + rand.nextInt(MAX_AGE - MIN_GRADUATION_AGE) + MIN_GRADUATION_AGE);
+        } while ((motherGradYear - motherBirthYear) > MAX_AGE);
 
-        String mBaptismID = UUID.randomUUID().toString();
+        String mGradID = UUID.randomUUID().toString();
         int mLocationIndex = rand.nextInt(locations.length);
         eventList.add(
                 new Event(
-                        mBaptismID,
+                        mGradID,
                         mother.getUsername(),
                         mother.getPersonID(),
                         locations[mLocationIndex].getLatitude(),
                         locations[mLocationIndex].getLongitude(),
                         locations[mLocationIndex].getCountry(),
                         locations[mLocationIndex].getCity(),
-                        "baptism",
-                        motherBaptismYear
+                        "graduation",
+                        motherGradYear
                 ));
     }
 
@@ -260,11 +246,11 @@ public class DataGenerator {
         int fatherDeathYear;
         int motherDeathYear;
 
-        int fLastEvent = Math.max(fatherBaptismYear, marriageYear);
+        int fLastEvent = Math.max(fatherGradYear, marriageYear);
         int fYearsTilMax = (MAX_AGE - (fLastEvent - fatherBirthYear) + 1);
         do {
             fatherDeathYear = (fLastEvent + rand.nextInt((fYearsTilMax)));
-        } while (fatherDeathYear < fatherBaptismYear || fatherDeathYear < marriageYear);
+        } while (fatherDeathYear < fatherGradYear || fatherDeathYear < marriageYear);
 
         String fDeathID = UUID.randomUUID().toString();
         int fLocationIndex = rand.nextInt(locations.length);
@@ -281,11 +267,11 @@ public class DataGenerator {
                         fatherDeathYear
                 ));
 
-        int mLastEvent = Math.max(motherBaptismYear, marriageYear);
+        int mLastEvent = Math.max(motherGradYear, marriageYear);
         int mYearsTilMax = (MAX_AGE - (mLastEvent - motherBirthYear) + 1);
         do {
             motherDeathYear = (mLastEvent + rand.nextInt((mYearsTilMax)));
-        } while (motherDeathYear < motherBaptismYear || motherDeathYear < marriageYear);
+        } while (motherDeathYear < motherGradYear || motherDeathYear < marriageYear);
 
 
         String mDeathID = UUID.randomUUID().toString();
@@ -322,33 +308,33 @@ public class DataGenerator {
                 ));
 
         //Generate a baptism event
-        int baptismYear;
+        int gradYear;
         do {
-            baptismYear = (birthYear + rand.nextInt(MAX_AGE - MIN_BAPTISM_AGE) + MIN_BAPTISM_AGE);
-        } while ((baptismYear - birthYear) > MAX_AGE);
+            gradYear = (birthYear + rand.nextInt(MAX_AGE - MIN_GRADUATION_AGE) + MIN_GRADUATION_AGE);
+        } while ((gradYear - birthYear) > MAX_AGE);
 
-        String BaptismID = UUID.randomUUID().toString();
-        int bLocationIndex = rand.nextInt(locations.length);
+        String GradID = UUID.randomUUID().toString();
+        int gLocationIndex = rand.nextInt(locations.length);
         eventList.add(
                 new Event(
-                        BaptismID,
+                        GradID,
                         user.getUsername(),
                         user.getPersonID(),
-                        locations[bLocationIndex].getLatitude(),
-                        locations[bLocationIndex].getLongitude(),
-                        locations[bLocationIndex].getCountry(),
-                        locations[bLocationIndex].getCity(),
-                        "baptism",
-                        baptismYear
+                        locations[gLocationIndex].getLatitude(),
+                        locations[gLocationIndex].getLongitude(),
+                        locations[gLocationIndex].getCountry(),
+                        locations[gLocationIndex].getCity(),
+                        "graduation",
+                        gradYear
                 ));
 
         //Generate a death event, cause the user dies alone.
         int deathYear;
 
-        int YearsTilMax = (MAX_AGE - (baptismYear - birthYear) + 1);
+        int YearsTilMax = (MAX_AGE - (gradYear - birthYear) + 1);
         do {
-            deathYear = (baptismYear + rand.nextInt((YearsTilMax)));
-        } while (deathYear < fatherBaptismYear);
+            deathYear = (gradYear + rand.nextInt((YearsTilMax)));
+        } while (deathYear < fatherGradYear);
 
         String DeathID = UUID.randomUUID().toString();
         int dLocationIndex = rand.nextInt(locations.length);

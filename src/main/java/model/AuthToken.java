@@ -1,13 +1,12 @@
 package model;
 
 public class AuthToken{
-    public AuthToken() {}
 
     public AuthToken(String authtoken, String userName, String personID) {
         setAuthToken(authtoken);
         setUserName(userName);
         setPersonID(personID);
-        success = true;
+        Boolean success = true;
     }
 
 
@@ -15,17 +14,14 @@ public class AuthToken{
     private String authtoken;
     private String username;
     private String personID;
-    private Boolean success;
 
     public void setAuthToken(String authtoken) { this.authtoken = authtoken; }
     public void setUserName(String username) { this.username = username; }
     public void setPersonID(String personID) { this.personID = personID;}
-    public void setSuccess(Boolean success) { this.success = success; }
 
     public String getAuthTokenID() { return authtoken; }
     public String getUserName() { return username; }
     public String getPersonID() { return personID; }
-    public Boolean getSuccess(){ return success; }
 
 
 }

@@ -15,7 +15,7 @@ public class JSONParser {
         MALE_NAME, FEMALE_NAME, LAST_NAME
     }
 
-    private final Gson TempSon; //IDEK what to call this variable since it gets kinda confusing
+    private final Gson TempSon;
 
 
 
@@ -88,15 +88,12 @@ public class JSONParser {
             case FEMALE_NAME:
                 filePath = "json/fnames.json";
                 break;
-            case LAST_NAME:
-                filePath = "json/snames.json";
-                break;
             default:
                 filePath = "json/snames.json";
                 break;
         }
         try {
-            fReader = new FileReader(new File(filePath));
+            fReader = new FileReader(filePath);
             return TempSon.fromJson(fReader, StringList.class).data;
         } catch (FileNotFoundException excep) {
             excep.printStackTrace();
@@ -112,7 +109,7 @@ public class JSONParser {
     public Location[] GetLocations() {
         Reader fReader;
         try {
-            fReader = new FileReader(new File("json/locations.json"));
+            fReader = new FileReader("json/locations.json");
             LocationData locations = TempSon.fromJson(fReader, LocationData.class);
             return locations.data;
         } catch (FileNotFoundException excep) {

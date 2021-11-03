@@ -18,7 +18,6 @@ public Person(String firstName,
               String fatherID,
               String motherID,
               String associatedUsername) {
-
     this.personID = personID;
     this.associatedUsername = associatedUsername;
     this.firstName = firstName;
@@ -87,11 +86,11 @@ public Person(String firstName,
 
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null)
+    public boolean equals(Object obj) {
+        if (obj == null)
             return false;
-        if (o instanceof model.Person) {
-            model.Person oPerson = (model.Person) o;
+        if (obj instanceof model.Person) {
+            model.Person oPerson = (model.Person) obj;
             return  oPerson.getPersonID().equals(getPersonID()) &&
                     oPerson.getUsername().equals(getUsername()) &&
                     oPerson.getFirstName().equals(getFirstName()) &&

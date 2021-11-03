@@ -71,7 +71,7 @@ public class Database {
             } catch (SQLException e) {
                 throw new DataAccessException("closeConnection failed");
             }
-        } catch (DataAccessException close) {
+        } catch (DataAccessException ignored) {
 
         }
     }

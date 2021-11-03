@@ -1,41 +1,40 @@
 package data_access;
 
-import java.sql.*;
 import java.util.ArrayList;
+import java.sql.*;
 
 import model.Person;
 public class PersonDAO {
-    public PersonDAO(Connection c) {
-        setConnection(c);
+    public PersonDAO(Connection conn) {
+        setConnection(conn);
     }
-    private Connection c;
-    public void setConnection(Connection c) { this.c = c; }
-    public Connection getConnection() { return c; }
+    private Connection conn;
+    public void setConnection(Connection conn) { this.conn = conn; }
+    public Connection getConnection() { return conn; }
 
     public void addPerson(Person person) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "INSERT INTO person (PersonID, Username, FirstName, LastName, Gender, FatherID, MotherID, SpouseID) " +
                         "VALUES(?,?,?,?,?,?,?,?)";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
                 //Fill the statement with the Person parameters.
-                stmt.setString(1, person.getPersonID());
-                stmt.setString(2, person.getUsername());
-                stmt.setString(3, person.getFirstName());
-                stmt.setString(4, person.getLastName());
-                stmt.setString(5, person.getGender());
-                stmt.setString(6, person.getFatherID());
-                stmt.setString(7, person.getMotherID());
-                stmt.setString(8, person.getSpouseID());
+                statement.setString(1, person.getPersonID());
+                statement.setString(2, person.getUsername());
+                statement.setString(3, person.getFirstName());
+                statement.setString(4, person.getLastName());
+                statement.setString(5, person.getGender());
+                statement.setString(6, person.getFatherID());
+                statement.setString(7, person.getMotherID());
+                statement.setString(8, person.getSpouseID());
 
-                stmt.executeUpdate();
+                statement.executeUpdate();
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException e) {
@@ -44,21 +43,20 @@ public class PersonDAO {
     }
 
     public void deletePerson(Person p) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "DELETE FROM person WHERE PersonID = ?;";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
                 //Fill the statement with the Person's personID.
-                stmt.setString(1, p.getPersonID());
+                statement.setString(1, p.getPersonID());
 
-                stmt.executeUpdate();
+                statement.executeUpdate();
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException e) {
@@ -67,14 +65,14 @@ public class PersonDAO {
     }
 
     public Person getPerson(String personID) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "SELECT * FROM person WHERE PersonID = ?;";
-                stmt = c.prepareStatement(sql);
-                stmt.setString(1, personID);
+                statement = conn.prepareStatement(sql);
+                statement.setString(1, personID);
 
-                ResultSet rs = stmt.executeQuery();
+                ResultSet rs = statement.executeQuery();
                 return new Person(
                         rs.getString("FirstName"),
                         rs.getString("LastName"),
@@ -86,9 +84,8 @@ public class PersonDAO {
                         rs.getString("Username"));
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException e) {
@@ -97,20 +94,20 @@ public class PersonDAO {
     }
 
     public Person[] getAllPersons(String Username) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "SELECT * FROM person WHERE Username=?;";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
                 //Fill the statement with the descendant's userName.
-                stmt.setString(1, Username);
+                statement.setString(1, Username);
 
                 //Execute the finalized query.
-                ResultSet rs = stmt.executeQuery();
+                ResultSet rs = statement.executeQuery();
 
                 //Iterate over the ResultSet and use the data to construct Person objects and add them to the Set.
-                ArrayList<Person> res = new ArrayList<Person>();
+                ArrayList<Person> res = new ArrayList<>();
                 while(rs.next()) {
                     String person = rs.getString("PersonID");
                     String username = rs.getString("Username");
@@ -127,9 +124,8 @@ public class PersonDAO {
                 return all;
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException e) {
@@ -138,9 +134,9 @@ public class PersonDAO {
     }
 
     public void clearTables() throws DataAccessException {
-        try (Statement stmt = c.createStatement()){
+        try (Statement statement = conn.createStatement()){
             String sql = "DELETE FROM person";
-            stmt.executeUpdate(sql);
+            statement.executeUpdate(sql);
         } catch (SQLException e) {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }

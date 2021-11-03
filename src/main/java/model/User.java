@@ -75,11 +75,11 @@ public class User {
 
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null)
+    public boolean equals(Object obj) {
+        if (obj == null)
             return false;
-        if (o instanceof model.User) {
-            model.User oUser = (model.User) o;
+        if (obj instanceof model.User) {
+            model.User oUser = (model.User) obj;
             return  oUser.getUsername().equals(getUsername()) &&
                     oUser.getPassword().equals(getPassword()) &&
                     oUser.getFirstName().equals(getFirstName()) &&

@@ -26,7 +26,6 @@ public class AuthTokenDAO {
             finally {
                 if(stmt != null) {
                     stmt.close();
-                    stmt = null;
                 }
             }
         } catch (SQLException e) {
@@ -50,7 +49,6 @@ public class AuthTokenDAO {
             finally {
                 if(stmt != null) {
                     stmt.close();
-                    stmt = null;
                 }
             }
         } catch (SQLException e) {

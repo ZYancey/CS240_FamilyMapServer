@@ -1,44 +1,43 @@
 package data_access;
 
-import java.sql.*;
 import java.util.ArrayList;
+import java.sql.*;
 
 import model.Event;
 public class EventDAO {
-    public EventDAO(Connection c) {
-        setConnection(c);
+    public EventDAO(Connection conn) {
+        setConnection(conn);
     }
-    private Connection c;
-    public void setConnection(Connection c) { this.c = c; }
-    public Connection getConnection() { return c; }
+    private Connection conn;
+    public void setConnection(Connection conn) { this.conn = conn; }
+    public Connection getConnection() { return conn; }
 
     
     public void addEvent(Event event) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "INSERT INTO event (EventID, AssociatedUsername, PersonID, Latitude, Longitude, " +
                         "Country, City, EventType, Year) VALUES(?,?,?,?,?,?,?,?,?)";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
                 //Fill the statement with the Event parameters.
-                stmt.setString(1, event.getEventID());
-                stmt.setString(2, event.getUsername());
-                stmt.setString(3, event.getPersonID());
-                stmt.setFloat(4, event.getLatitude());
-                stmt.setFloat(5, event.getLongitude());
-                stmt.setString(6, event.getCountry());
-                stmt.setString(7, event.getCity());
-                stmt.setString(8, event.getEventType());
-                stmt.setInt(9, event.getYear());
+                statement.setString(1, event.getEventID());
+                statement.setString(2, event.getUsername());
+                statement.setString(3, event.getPersonID());
+                statement.setFloat(4, event.getLatitude());
+                statement.setFloat(5, event.getLongitude());
+                statement.setString(6, event.getCountry());
+                statement.setString(7, event.getCity());
+                statement.setString(8, event.getEventType());
+                statement.setInt(9, event.getYear());
 
 
-                stmt.executeUpdate();
+                statement.executeUpdate();
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException err) {
@@ -47,20 +46,19 @@ public class EventDAO {
     }
 
     public void deleteEvent(Event event) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "DELETE FROM event WHERE EventID = ?;";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
-                stmt.setString(1, event.getEventID());
+                statement.setString(1, event.getEventID());
 
-                stmt.executeUpdate();
+                statement.executeUpdate();
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException err) {
@@ -69,15 +67,15 @@ public class EventDAO {
     }
 
     public Event getEvent(String eventID) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "SELECT * FROM event WHERE EventID = ?;";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
-                stmt.setString(1, eventID);
+                statement.setString(1, eventID);
 
-                ResultSet rs = stmt.executeQuery();
+                ResultSet rs = statement.executeQuery();
                 return new Event(
                         rs.getString("EventID"),
                         rs.getString("AssociatedUsername"),
@@ -90,9 +88,8 @@ public class EventDAO {
                         rs.getInt("Year"));
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException err) {
@@ -101,19 +98,17 @@ public class EventDAO {
     }
 
     public Event[] getAllEvents(String AssociatedUsername) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement statement = null;
         try {
             try {
                 String sql = "SELECT * FROM event WHERE AssociatedUsername=?;";
-                stmt = c.prepareStatement(sql);
+                statement = conn.prepareStatement(sql);
 
-                //Fill the statement with the AssociatedUsername's userNamerr.
-                stmt.setString(1, AssociatedUsername);
+                statement.setString(1, AssociatedUsername);
 
-                ResultSet rs = stmt.executeQuery();
+                ResultSet rs = statement.executeQuery();
 
-                //Iterate over the ResultSet to construct Event objects and add them to the Set to be returned.
-                ArrayList<Event> res = new ArrayList<Event>();
+                ArrayList<Event> resultSet = new ArrayList<>();
                 while(rs.next()) {
                     String EventID = rs.getString("EventID");
                     String PersonID = rs.getString("PersonID");
@@ -124,28 +119,27 @@ public class EventDAO {
                     String City = rs.getString("City");
                     String EventType = rs.getString("EventType");
                     int    Year = rs.getInt("Year");
-                    res.add(new Event(EventID,PersonID,Username,Latitude,Longitude,Country,City,EventType,Year));
+                    resultSet.add(new Event(EventID,Username,PersonID,Latitude,Longitude,Country,City,EventType,Year));
                 }
-                //For some reason it won't let me just do the toArray() function and cast as an Event[].....
-                Event[] all = new Event[res.size()];
-                res.toArray(all);
-                return all;
+
+                Event[] events = new Event[resultSet.size()];
+                resultSet.toArray(events);
+                return events;
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
-                    stmt = null;
+                if(statement != null) {
+                    statement.close();
                 }
             }
         } catch (SQLException err) {
-            throw new DataAccessException(String.format("Get All event failed. : %s", err.getLocalizedMessage()));
+            throw new DataAccessException(String.format("Get all event failed. : %s", err.getLocalizedMessage()));
         }
     }
 
     public void clearTables() throws DataAccessException {
-        try (Statement stmt = c.createStatement()){
+        try (Statement statement = conn.createStatement()){
             String sql = "DELETE FROM event";
-            stmt.executeUpdate(sql);
+            statement.executeUpdate(sql);
         } catch (SQLException e) {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
