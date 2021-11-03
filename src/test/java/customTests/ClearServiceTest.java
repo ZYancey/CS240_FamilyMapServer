@@ -1,29 +1,30 @@
 package customTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import dao.Database;
+import data_access.Database;
 
-import results.Result;
-import services.ClearService;
+import result.Result;
+import service.ClearService;
 
 public class ClearServiceTest {
 	private ClearService cs;
+	private Database db;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		Database.setTesting(true);
+		db = new Database();
 		cs = new ClearService();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		cs = null;
-		Database.setTesting(false);
+		db.closeConnection(false);
 	}
 
 	@Test

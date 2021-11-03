@@ -1,44 +1,47 @@
 package customTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import dao.*;
+import data_access.Database;
 
-import requests.LoginRequest;
-import results.AuthResult;
-import services.*;
+import data_access.*;
+
+import request.LoginRequest;
+import result.AuthResult;
+import service.*;
 
 public class LoginServiceTest {
 	private LoginService ls;
+	private Database db;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		Database.setTesting(true);
+		db = new Database();
 		ls = new LoginService();
 		new ClearService().clear();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		ls = null;
-		Database.setTesting(false);
+		db.closeConnection(false);
 	}
 
 	@Test
 	public void testLogin() {
 		LoginRequest req = new LoginRequest("dMonster", "pass");
 		AuthResult res = ls.login(req);
-		assertEquals("Login failed : User not registered.", res.getMessage());
+		assertEquals("Error : User not registered.", res.getMessage());
 		
 		Database db = new Database();
 		try {
-			db.getUD().addUser(new model.User("dMonster", "pass", "clarky@apple.com", "Clark", "Green", 'M', "cani"));
+			db.getUserData().addUser(new model.User("dMonster", "pass", "clarky@apple.com", "Clark", "Green", "M", "cani"));
 			db.closeConnection(true);
-		} catch (DatabaseException e) {
+		} catch (DataAccessException e) {
 			db.closeConnection(false);
 			System.out.println("Add for Login Test failed.");
 			e.printStackTrace();

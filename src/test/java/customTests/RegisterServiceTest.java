@@ -30,11 +30,11 @@ public class RegisterServiceTest {
 
 	@Test
 	public void testRegister() {
-		RegisterRequest rr = new RegisterRequest("cMonster",
-				"apple",
-				"seeker@hogwarts.com",
-				"Harry",
-				"Potter",
+		RegisterRequest rr = new RegisterRequest("user",
+				"pass",
+				"em@il.com",
+				"Name",
+				"Last",
 				"M",
 				"personID");
 		AuthResult ar = rs.register(rr);

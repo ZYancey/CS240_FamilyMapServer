@@ -1,35 +1,42 @@
 package customTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import dao.Database;
-
-import requests.*;
-import results.*;
-import services.*;
+import data_access.Database;
+import request.*;
+import result.*;
+import service.*;
 
 public class PersonServiceTest {
 	private PersonService ps;
+	private Database db;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
-		Database.setTesting(true);
+		db = new Database();
 		ps = new PersonService();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		ps = null;
-		Database.setTesting(false);
+		db.closeConnection(false);
 	}
 
 	@Test
 	public void testGetAll() {
-		RegisterRequest rr = new RegisterRequest("yodamaster", "manamana", "huffle@hogwarts.com", "John", "Werner", 'M');
+		RegisterRequest rr = new RegisterRequest(
+				"yodamaster",
+				"manamana",
+				"huffle@hogwarts.com",
+				"John",
+				"Wrner",
+				"M",
+				"ID");
 		AuthResult ar = new RegisterService().register(rr);
 		
 		PersonResult pr = ps.getAll(new PersonRequest(ar.getAuthToken().getAuthTokenID(), ar.getAuthToken().getPersonID()));
@@ -39,7 +46,14 @@ public class PersonServiceTest {
 
 	@Test
 	public void testGetPerson() {
-		RegisterRequest rr = new RegisterRequest("fMonster", "scribbles", "peeves@hogwarts.com", "Chuck", "Norris", 'M');
+		RegisterRequest rr = new RegisterRequest(
+				"fMonster",
+				"scribbles",
+				"peeves@hogwarts.com",
+				"Chuck",
+				"Norris",
+				"M",
+				"ID");
 		AuthResult ar = new RegisterService().register(rr);
 		PersonResult pr = ps.getPerson(new PersonRequest(ar.getAuthToken().getAuthTokenID(), ar.getAuthToken().getPersonID()));
 		

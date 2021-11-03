@@ -1,35 +1,44 @@
 package customTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import dao.Database;
+import data_access.Database;
 
-import requests.*;
-import services.*;
-import results.*;
+import request.*;
+import service.*;
+import result.*;
 
 public class FillServiceTest {
 	private FillService fs;
+	private Database db;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		Database.setTesting(true);
+		db = new Database();
 		fs = new FillService();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fs = null;
-		Database.setTesting(false);
+		db.closeConnection(false);
 	}
 
 	@Test
 	public void testDefaultFill() {
-		RegisterRequest rr = new RegisterRequest("kMonster", "buenaVista", "mockingjay@myldsmail.net", "Katniss", "Everdeen", 'F');
+		RegisterRequest rr = new RegisterRequest(
+				"kMonster",
+				"buenaVista",
+				"mockingjay@myldsmail.net",
+				"Katniss",
+				"Everdeen",
+				"F",
+				"ID");
+
 		AuthResult ar = new RegisterService().register(rr);
 		
 		Result res = fs.fill(new FillRequest(ar.getAuthToken().getUserName(), 0));
@@ -40,7 +49,14 @@ public class FillServiceTest {
 	
 	@Test
 	public void testSpecificFill() {
-		RegisterRequest rr = new RegisterRequest("vMonster", "castlevania", "fangs@gmail.com", "Alucard", "Belmont", 'M');
+		RegisterRequest rr = new RegisterRequest(
+				"vMonster",
+				"castlevania",
+				"fangs@gmail.com",
+				"Alucard",
+				"Belmont",
+				"M",
+				"ID");
 		AuthResult ar = new RegisterService().register(rr);
 		
 		Result res = fs.fill(new FillRequest(ar.getAuthToken().getUserName(), 6));

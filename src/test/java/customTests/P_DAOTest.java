@@ -1,7 +1,9 @@
+package customTests;
+
 import data_access.DataAccessException;
 import data_access.Database;
-import data_access.UserDAO;
-import model.User;
+import data_access.PersonDAO;
+import model.Person;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,10 +13,10 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 //We will use this to test that our insert method is working and failing in the right ways
-public class U_DAOtest {
+public class P_DAOTest {
     private Database db;
-    private User bestUser;
-    private UserDAO uDao;
+    private Person bestPerson;
+    private PersonDAO pDao;
 
     @BeforeEach
     public void setUp() throws DataAccessException
@@ -23,20 +25,21 @@ public class U_DAOtest {
         //lets create a new database
         db = new Database();
         //and a new event with random data
-        bestUser = new User(
+        bestPerson = new Person(
                 "Biking_123A",
                 "Gale",
                 "Gale123A",
                 "35.9f",
-                "Japan",
                 "F",
-                "Ushiku");
+                "Japan",
+                "Ushiku",
+                "Biking_Around");
         //Here, we'll open the connection in preparation for the test case to use it
         Connection conn = db.getConnection();
         //Let's clear the database as well so any lingering data doesn't affect our tests
         db.clearTables();
-        //Then we pass that connection to the UserDAO so it can access the database
-        uDao = new UserDAO(conn);
+        //Then we pass that connection to the PersonDAO so it can access the database
+        pDao = new PersonDAO(conn);
     }
 
     @AfterEach
@@ -51,46 +54,46 @@ public class U_DAOtest {
     public void insertPass() throws DataAccessException {
         //While insert returns a bool we can't use that to verify that our function actually worked
         //only that it ran without causing an error
-        uDao.addUser(bestUser);
+        pDao.addPerson(bestPerson);
         //So lets use a find method to get the event that we just put in back out
-        User compareTest = uDao.getUser(bestUser.getUsername());
         //First lets see if our find found anything at all. If it did then we know that if nothing
         //else something was put into our database, since we cleared it in the beginning
+        Person compareTest = pDao.getPerson(bestPerson.getPersonID());
         assertNotNull(compareTest);
         //Now lets make sure that what we put in is exactly the same as what we got out. If this
         //passes then we know that our insert did put something in, and that it didn't change the
         //data in any way
-        assertEquals(bestUser, compareTest);
+        assertEquals(bestPerson, compareTest);
     }
     @Test
     public void retrievalPass() throws DataAccessException {
-        uDao.addUser(bestUser);
-        User compareTest = uDao.getUser(bestUser.getUsername());
+        pDao.addPerson(bestPerson);
+        Person compareTest = pDao.getPerson(bestPerson.getPersonID());
         assertNotNull(compareTest);
-        assertEquals(bestUser, compareTest);
+        assertEquals(bestPerson, compareTest);
     }
 
     @Test
     public void insertFail() throws DataAccessException {
         //lets do this test again but this time lets try to make it fail
         //if we call the method the first time it will insert it successfully
-        uDao.addUser(bestUser);
+        pDao.addPerson(bestPerson);
         //but our sql table is set up so that "eventID" must be unique. So trying to insert it
         //again will cause the method to throw an exception
         //Note: This call uses a lambda function. What a lambda function is is beyond the scope
         //of this class. All you need to know is that this line of code runs the code that
         //comes after the "()->" and expects it to throw an instance of the class in the first parameter.
-        assertThrows(DataAccessException.class, ()-> uDao.addUser(bestUser));
+        assertThrows(DataAccessException.class, ()-> pDao.addPerson(bestPerson));
     }
 
     @Test
     public void deletePass() throws DataAccessException {
 
-        uDao.addUser(bestUser);
-        uDao.clearTables();
-        uDao.addUser(bestUser);
-        User compareTest = uDao.getUser(bestUser.getUsername());
+        pDao.addPerson(bestPerson);
+        pDao.clearTables();
+        pDao.addPerson(bestPerson);
+        Person compareTest = pDao.getPerson(bestPerson.getPersonID());
         assertNotNull(compareTest);
-        assertEquals(bestUser, compareTest);
+        assertEquals(bestPerson, compareTest);
     }
 }

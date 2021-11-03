@@ -1,61 +1,51 @@
 package customTests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import data_access.Database;
 
 import model.Event;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import dao.*;
-import results.*;
-import services.*;
-import requests.*;
+import data_access.*;
+import result.*;
+import service.*;
+import request.*;
 
 public class EventServiceTest {
 	private EventService es;
+	private Database db;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		Database.setTesting(true);
+		db = new Database();
 		es = new EventService();
 		new ClearService().clear();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		es = null;
-		Database.setTesting(false);
+		db.closeConnection(false);
 	}
 
 	@Test
 	public void testGetAll() {
-		RegisterRequest req = new RegisterRequest("gMonster", "gremlins", "dumblydore@hogwarts.edu", "Albus", "Dumbledore", 'M');
+		RegisterRequest req = new RegisterRequest(
+				"gMonster",
+				"gremlins",
+				"dumblydore@hogwarts.edu",
+				"Albus",
+				"Dumbledore",
+				"M",
+				"ID");
 		AuthResult ar = new RegisterService().register(req);
 		
 		EventRequest er = new EventRequest(ar.getAuthToken().getAuthTokenID(), "");
 		assertEquals(123, es.getAll(er).getData().length);
 	}
 
-	@Test
-	public void testGetEvent() {
-		RegisterRequest req = new RegisterRequest("tMonster", "gaanhpianh", "dobby@hogwarts.edu", "Nick", "Dumbledore", 'M');
-		AuthResult ar = new RegisterService().register(req);
-		
-		Event a = new Event("faltg", ar.getAuthToken().getPersonID(), "tMonster", 10.191, 77.004, "Iceland", "Yyyvsk", "birth", "1777");
-
-		Database db = new Database();
-		
-		try {
-			db.getED().addEvent(a);
-			db.closeConnection(true);
-		} catch (DatabaseException e) {
-			db.closeConnection(false);
-			System.out.println(e.getLocalizedMessage());
-		}
-		
-		EventRequest er = new EventRequest(ar.getAuthToken().getAuthTokenID(), "faltg");
-		assertEquals("1777", es.getEvent(er).getEvent().getYear());
-	}
 }
