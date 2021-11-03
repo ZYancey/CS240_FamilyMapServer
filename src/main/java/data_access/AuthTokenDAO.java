@@ -4,63 +4,63 @@ import java.sql.*;
 
 import model.AuthToken;
 public class AuthTokenDAO {
-    public AuthTokenDAO(Connection c) {
-        setConnection(c);
+    public AuthTokenDAO(Connection conn) {
+        setConnection(conn);
     }
-    private Connection c;
-    public void setConnection(Connection c) { this.c = c; }
-    public Connection getConnection() { return c; }
+    private Connection conn;
+    public void setConnection(Connection conn) { this.conn = conn; }
+    public Connection getConnection() { return conn; }
 
-    public void addAuthToken(AuthToken a) throws DataAccessException {
-        PreparedStatement stmt = null;
+    public void addAuthToken(AuthToken authToken) throws DataAccessException {
+        PreparedStatement preparedStatement = null;
         try {
             try {
                 String sql = "INSERT INTO authtoken (authtokenID, username, personID) VALUES (?, ?, ?);";
-                stmt = c.prepareStatement(sql);
+                preparedStatement = conn.prepareStatement(sql);
 
-                stmt.setString(1, a.getAuthTokenID());
-                stmt.setString(2, a.getUserName());
-                stmt.setString(3, a.getPersonID());
-                stmt.executeUpdate();
+                preparedStatement.setString(1, authToken.getAuthTokenID());
+                preparedStatement.setString(2, authToken.getUserName());
+                preparedStatement.setString(3, authToken.getPersonID());
+                preparedStatement.executeUpdate();
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
+                if(preparedStatement != null) {
+                    preparedStatement.close();
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Add AuthToken failed. : %s", e.getLocalizedMessage()));
+        } catch (SQLException exception) {
+            throw new DataAccessException(String.format("Add AuthToken failed. : %s", exception.getLocalizedMessage()));
         }
     }
 
     public AuthToken getAuthToken(String authID) throws DataAccessException {
-        PreparedStatement stmt = null;
+        PreparedStatement preparedStatement = null;
         try {
             try {
                 String sql = "SELECT * FROM authtoken WHERE authtokenID = ?;";
-                stmt = c.prepareStatement(sql);
-                stmt.setString(1, authID);
+                preparedStatement = conn.prepareStatement(sql);
+                preparedStatement.setString(1, authID);
 
-                ResultSet rs = stmt.executeQuery();
-                return new AuthToken(rs.getString("authtokenID"),
-                        rs.getString("username"),
-                        rs.getString("personID"));
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return new AuthToken(resultSet.getString("authtokenID"),
+                        resultSet.getString("username"),
+                        resultSet.getString("personID"));
             }
             finally {
-                if(stmt != null) {
-                    stmt.close();
+                if(preparedStatement != null) {
+                    preparedStatement.close();
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Get AuthToken failed. : %s", e.getLocalizedMessage()));
+        } catch (SQLException exception) {
+            throw new DataAccessException(String.format("Get AuthToken failed. : %s", exception.getLocalizedMessage()));
         }
     }
 
     public void clearTables() throws DataAccessException {
-        try (Statement stmt = c.createStatement()){
+        try (Statement statement = conn.createStatement()){
             String sql = "DELETE FROM authtoken";
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
+            statement.executeUpdate(sql);
+        } catch (SQLException exception) {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
     }

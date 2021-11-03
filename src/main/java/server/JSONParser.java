@@ -25,21 +25,21 @@ public class JSONParser {
 
     public String ObjectToJSON(Object inputObj) {
         if (inputObj.getClass() == PersonResult.class) {
-            PersonResult pResult = (PersonResult) inputObj;
-            if (pResult.getPerson() != null) {
-                return TempSon.toJson(pResult.getPerson());
+            PersonResult personResult = (PersonResult) inputObj;
+            if (personResult.getPerson() != null) {
+                return TempSon.toJson(personResult.getPerson());
             }
         }
         if (inputObj.getClass() == EventResult.class) {
-            EventResult eResult = (EventResult) inputObj;
-            if (eResult.getEvent() != null) {
-                return TempSon.toJson(eResult.getEvent());
+            EventResult eventResult = (EventResult) inputObj;
+            if (eventResult.getEvent() != null) {
+                return TempSon.toJson(eventResult.getEvent());
             }
         }
         if (inputObj.getClass() == AuthResult.class) {
-            AuthResult aResult = (AuthResult) inputObj;
-            if (aResult.getAuthToken() != null) {
-                return TempSon.toJson(aResult.getAuthToken());
+            AuthResult authResult = (AuthResult) inputObj;
+            if (authResult.getAuthToken() != null) {
+                return TempSon.toJson(authResult.getAuthToken());
             }
         }
         return TempSon.toJson(inputObj);
@@ -78,7 +78,7 @@ public class JSONParser {
     }
 
     public String[] GetNames(Names nameType) throws IOException {
-        Reader fReader = null;
+        Reader fileReader = null;
         String filePath;
 
         switch (nameType) {
@@ -93,13 +93,13 @@ public class JSONParser {
                 break;
         }
         try {
-            fReader = new FileReader(filePath);
-            return TempSon.fromJson(fReader, StringList.class).data;
-        } catch (FileNotFoundException excep) {
-            excep.printStackTrace();
+            fileReader = new FileReader(filePath);
+            return TempSon.fromJson(fileReader, StringList.class).data;
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
         } finally {
-            if (fReader != null) {
-                fReader.close();
+            if (fileReader != null) {
+                fileReader.close();
             }
         }
         return null;
@@ -107,13 +107,13 @@ public class JSONParser {
 
 
     public Location[] GetLocations() {
-        Reader fReader;
+        Reader fileReader;
         try {
-            fReader = new FileReader("json/locations.json");
-            LocationData locations = TempSon.fromJson(fReader, LocationData.class);
+            fileReader = new FileReader("json/locations.json");
+            LocationData locations = TempSon.fromJson(fileReader, LocationData.class);
             return locations.data;
-        } catch (FileNotFoundException excep) {
-            excep.printStackTrace();
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
         }
         return null;
     }

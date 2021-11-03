@@ -13,26 +13,26 @@ import java.util.Locale;
 
 public class ClearHandler implements HttpHandler {
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange httpExchange) throws IOException {
         try {
             JSONParser json = new JSONParser();
             Result result = new ClearService().clear();
             System.out.println(result.getMessage().toLowerCase(Locale.ROOT));
             if (!result.getMessage().contains("Fail")) {
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             } else {
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
             }
-            OutputStream respBody = exchange.getResponseBody();
+            OutputStream respBody = httpExchange.getResponseBody();
             OutputStreamWriter out = new OutputStreamWriter(respBody);
             out.write(json.ObjectToJSON(result));
             out.flush();
             respBody.close();
 
-        } catch (IOException e) {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-            exchange.getResponseBody().close();
-            e.printStackTrace();
+        } catch (IOException exception) {
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+            httpExchange.getResponseBody().close();
+            exception.printStackTrace();
         }
 
     }

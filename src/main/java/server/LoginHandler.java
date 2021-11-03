@@ -14,22 +14,22 @@ public class LoginHandler implements HttpHandler {
     private Result error;
 
 
-    public void handle(HttpExchange exch) throws IOException {
+    public void handle(HttpExchange httpExchange) throws IOException {
         boolean success = false;
         JSONParser json = new JSONParser();
 
         try {
-            if (exch.getRequestMethod().equalsIgnoreCase("POST")) {
-                InputStream reqBody = exch.getRequestBody();
+            if (httpExchange.getRequestMethod().equalsIgnoreCase("POST")) {
+                InputStream reqBody = httpExchange.getRequestBody();
                 InputStreamReader in = new InputStreamReader(reqBody);
                 LoginRequest lr = json.JSONToObject(in, LoginRequest.class);
                 if (validateRequestInfo(lr)) {
                     AuthResult ar = new LoginService().login(lr);
 
                     if (ar.getMessage() != null) {
-                        exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                        httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
-                        OutputStream respBody = exch.getResponseBody();
+                        OutputStream respBody = httpExchange.getResponseBody();
                         OutputStreamWriter out = new OutputStreamWriter(respBody);
                         out.write(json.ObjectToJSON(ar));
                         out.flush();
@@ -37,9 +37,9 @@ public class LoginHandler implements HttpHandler {
                     }
 
 
-                    exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 
-                    OutputStream respBody = exch.getResponseBody();
+                    OutputStream respBody = httpExchange.getResponseBody();
                     OutputStreamWriter out = new OutputStreamWriter(respBody);
                     out.write(json.ObjectToJSON(ar));
                     out.flush();
@@ -48,9 +48,9 @@ public class LoginHandler implements HttpHandler {
                 } else {
                     AuthResult ar = new LoginService().login(lr);
 
-                    exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                    httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
-                    OutputStream respBody = exch.getResponseBody();
+                    OutputStream respBody = httpExchange.getResponseBody();
                     OutputStreamWriter out = new OutputStreamWriter(respBody);
                     out.write(json.ObjectToJSON(ar));
                     out.flush();
@@ -59,24 +59,22 @@ public class LoginHandler implements HttpHandler {
             }
 
             if (!success) {
-                exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 if (error != null) {
-                    OutputStreamWriter out = new OutputStreamWriter(exch.getResponseBody());
+                    OutputStreamWriter out = new OutputStreamWriter(httpExchange.getResponseBody());
                     out.write(json.ObjectToJSON(error));
                     out.flush();
                 }
-                exch.getResponseBody().close();
+                httpExchange.getResponseBody().close();
             }
         } catch (IOException io) {
-            exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-            exch.getResponseBody().close();
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+            httpExchange.getResponseBody().close();
             io.printStackTrace();
         }
     }
 
-    /**
-     * Check that the request info is valid. Return true if it is, and false if there is a mistake.
-     */
+
     private boolean validateRequestInfo(LoginRequest lr) {
         if (lr.getUsername().isEmpty()) {
             error = new Result("Username empty");
@@ -86,7 +84,6 @@ public class LoginHandler implements HttpHandler {
             error = new Result("Password empty");
             return false;
         }
-        //At this point everything checks out.
         return true;
     }
 }

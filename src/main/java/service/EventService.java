@@ -8,55 +8,56 @@ import result.EventResult;
 public class EventService {
     public EventService() {}
 
-    public EventResult getAll(EventRequest er) {
-        Database db = new Database();
+    public EventResult getAll(EventRequest eventRequest) {
+        Database database = new Database();
         try {
             AuthToken token;
             try {
-                token = db.getAuthData().getAuthToken(er.getAuthTokenID());
+                token = database.getAuthData().getAuthToken(eventRequest.getAuthTokenID());
                 if(token == null) {
-                    db.closeConnection(false);
+                    database.closeConnection(false);
                     return new EventResult("Error: Invalid AuthTokenID.");
                 }
-            } catch (DataAccessException e) {
-                db.closeConnection(false);
+            } catch (DataAccessException exception) {
+                database.closeConnection(false);
                 return new EventResult("Error: Invalid AuthTokenID.");
             }
 
-            Event[] results = db.getEventData().getAllEvents(token.getUserName());
-            db.closeConnection(true);
+            Event[] results = database.getEventData().getAllEvents(token.getUserName());
+            database.closeConnection(true);
             return new EventResult(results);
-        } catch (DataAccessException evt) {
-            db.closeConnection(false);
-            return new EventResult(String.format("Error: Failed to get all Events : %s", evt.getLocalizedMessage()));
+        } catch (DataAccessException exception) {
+            database.closeConnection(false);
+            return new EventResult(String.format("Error: Failed to get all Events : %s", exception.getLocalizedMessage()));
         }
     }
 
-    public EventResult getEvent(EventRequest er) {
-        Database db = new Database();
+    public EventResult getEvent(EventRequest eventRequest) {
+        Database database = new Database();
         try {
             AuthToken token;
             try {
                 //Get AuthToken
-                token = db.getAuthData().getAuthToken(er.getAuthTokenID());
+                token = database.getAuthData().getAuthToken(eventRequest.getAuthTokenID());
                 if(token == null) {
-                    db.closeConnection(false);
+                    database.closeConnection(false);
                     return new EventResult("Error: Invalid AuthTokenID.");
                 }
-            } catch (DataAccessException e) {
-                db.closeConnection(false);
+            } catch (DataAccessException exception) {
+                database.closeConnection(false);
                 return new EventResult("Error: Invalid AuthTokenID.");
             }
 
-            Event result = db.getEventData().getEvent(er.getEventID());
+            Event result = database.getEventData().getEvent(eventRequest.getEventID());
             if(!result.getUsername().equals(token.getUserName())) {
                 throw new DataAccessException("Error: Not authorized to access that event.");
             }
-            db.closeConnection(true);
+            database.closeConnection(true);
             return new EventResult(result);
-        } catch (DataAccessException evt) {
-            db.closeConnection(false);
-            return new EventResult(String.format("Error : %s", evt.getLocalizedMessage()));
+
+        } catch (DataAccessException exception) {
+            database.closeConnection(false);
+            return new EventResult(String.format("Error : %s", exception.getLocalizedMessage()));
         }
     }
 }

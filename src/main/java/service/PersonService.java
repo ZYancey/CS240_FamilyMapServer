@@ -8,55 +8,55 @@ import result.PersonResult;
 public class PersonService {
     public PersonService() {}
 
-    public PersonResult getAll(PersonRequest pr) {
-        Database db = new Database();
+    public PersonResult getAll(PersonRequest personRequest) {
+        Database database = new Database();
         try {
             AuthToken token;
             try {
-                token = db.getAuthData().getAuthToken(pr.getAuthTokenID());
+                token = database.getAuthData().getAuthToken(personRequest.getAuthTokenID());
                 if(token == null) {
-                    db.closeConnection(false);
+                    database.closeConnection(false);
                     return new PersonResult("Error : Invalid AuthTokenID.");
                 }
-            } catch (DataAccessException e) {
-                db.closeConnection(false);
+            } catch (DataAccessException exception) {
+                database.closeConnection(false);
                 return new PersonResult("Error : Invalid AuthTokenID.");
             }
 
-            Person[] results = db.getPersonData().getAllPersons(token.getUserName());
-            db.closeConnection(true);
-            return new PersonResult(results);
-        } catch (DataAccessException per) {
-            db.closeConnection(false);
-            return new PersonResult(String.format("Error : %s", per.getLocalizedMessage()));
+            Person[] allPersons = database.getPersonData().getAllPersons(token.getUserName());
+            database.closeConnection(true);
+            return new PersonResult(allPersons);
+        } catch (DataAccessException exception) {
+            database.closeConnection(false);
+            return new PersonResult(String.format("Error : %s", exception.getLocalizedMessage()));
         }
     }
 
-    public PersonResult getPerson(PersonRequest pr) {
-        Database db = new Database();
+    public PersonResult getPerson(PersonRequest personRequest) {
+        Database database = new Database();
         try {
             AuthToken token;
             try {
                 //Get AuthToken
-                token = db.getAuthData().getAuthToken(pr.getAuthTokenID());
+                token = database.getAuthData().getAuthToken(personRequest.getAuthTokenID());
                 if(token == null) {
-                    db.closeConnection(false);
+                    database.closeConnection(false);
                     return new PersonResult("Error : Invalid AuthTokenID.");
                 }
-            } catch (DataAccessException e) {
-                db.closeConnection(false);
+            } catch (DataAccessException exception) {
+                database.closeConnection(false);
                 return new PersonResult("Error : Invalid AuthTokenID.");
             }
 
-            Person result = db.getPersonData().getPerson(pr.getPersonID());
-            if(!result.getUsername().equals(token.getUserName())) {
+            Person person = database.getPersonData().getPerson(personRequest.getPersonID());
+            if(!person.getUsername().equals(token.getUserName())) {
                 throw new DataAccessException("Error : Not authorized to access that person.");
             }
-            db.closeConnection(true);
-            return new PersonResult(result);
-        } catch (DataAccessException per) {
-            db.closeConnection(false);
-            return new PersonResult(String.format("Error : Failed to get Person : %s", per.getLocalizedMessage()));
+            database.closeConnection(true);
+            return new PersonResult(person);
+        } catch (DataAccessException exception) {
+            database.closeConnection(false);
+            return new PersonResult(String.format("Error : Failed to get Person : %s", exception.getLocalizedMessage()));
         }
     }
 }

@@ -1,5 +1,3 @@
-package dao;
-
 import data_access.DataAccessException;
 import data_access.Database;
 import data_access.EventDAO;
@@ -13,10 +11,10 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 //We will use this to test that our insert method is working and failing in the right ways
-public class EventDAOTest {
+public class E_DAOtest {
     private Database db;
     private Event bestEvent;
-    private EventDAO eDao;
+    private data_access.EventDAO eDao;
 
     @BeforeEach
     public void setUp() throws DataAccessException
@@ -32,8 +30,8 @@ public class EventDAOTest {
         Connection conn = db.getConnection();
         //Let's clear the database as well so any lingering data doesn't affect our tests
         db.clearTables();
-        //Then we pass that connection to the EventDAO so it can access the database
-        eDao = new EventDAO(conn);
+        //Then we pass that connection to the EventDAOtest so it can access the database
+        eDao = new data_access.EventDAO(conn);
     }
 
     @AfterEach
@@ -48,9 +46,9 @@ public class EventDAOTest {
     public void insertPass() throws DataAccessException {
         //While insert returns a bool we can't use that to verify that our function actually worked
         //only that it ran without causing an error
-        eDao.insert(bestEvent);
+        eDao.addEvent(bestEvent);
         //So lets use a find method to get the event that we just put in back out
-        Event compareTest = eDao.find(bestEvent.getEventID());
+        Event compareTest = eDao.getEvent(bestEvent.getEventID());
         //First lets see if our find found anything at all. If it did then we know that if nothing
         //else something was put into our database, since we cleared it in the beginning
         assertNotNull(compareTest);
@@ -64,12 +62,25 @@ public class EventDAOTest {
     public void insertFail() throws DataAccessException {
         //lets do this test again but this time lets try to make it fail
         //if we call the method the first time it will insert it successfully
-        eDao.insert(bestEvent);
+        eDao.addEvent(bestEvent);
         //but our sql table is set up so that "eventID" must be unique. So trying to insert it
         //again will cause the method to throw an exception
         //Note: This call uses a lambda function. What a lambda function is is beyond the scope
         //of this class. All you need to know is that this line of code runs the code that
         //comes after the "()->" and expects it to throw an instance of the class in the first parameter.
-        assertThrows(DataAccessException.class, ()-> eDao.insert(bestEvent));
+        assertThrows(DataAccessException.class, ()-> eDao.addEvent(bestEvent));
     }
+
+    @Test
+    public void deletePass() throws DataAccessException {
+
+        eDao.addEvent(bestEvent);
+        eDao.deleteEvent(bestEvent);
+        eDao.addEvent(bestEvent);
+        Event compareTest = eDao.getEvent(bestEvent.getEventID());
+        assertNotNull(compareTest);
+        assertEquals(bestEvent, compareTest);
+    }
+
+
 }

@@ -12,91 +12,91 @@ public class UserDAO {
     public Connection getConnection() { return conn; }
 
     public void addUser(User user) throws DataAccessException {
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             try {
                 String sql = "INSERT INTO user (Username, Password, Email, FirstName, LastName, Gender, PersonID) " +
                         "VALUES(?, ?, ?, ?, ?, ?, ?)";
-                statement = conn.prepareStatement(sql);
+                preparedStatement = conn.prepareStatement(sql);
 
                 //Fill the statement with the User's parameters.
-                statement.setString(1, user.getUsername());
-                statement.setString(2, user.getPassword());
-                statement.setString(3, user.getEmail());
-                statement.setString(4, user.getFirstName());
-                statement.setString(5, user.getLastName());
-                statement.setString(6, user.getGender());
-                statement.setString(7, user.getPersonID());
+                preparedStatement.setString(1, user.getUsername());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(3, user.getEmail());
+                preparedStatement.setString(4, user.getFirstName());
+                preparedStatement.setString(5, user.getLastName());
+                preparedStatement.setString(6, user.getGender());
+                preparedStatement.setString(7, user.getPersonID());
 
-                statement.executeUpdate();
+                preparedStatement.executeUpdate();
             }
             finally {
-                if(statement != null) {
-                    statement.close();
+                if(preparedStatement != null) {
+                    preparedStatement.close();
                 }
             }
-        } catch (SQLException e) {
-            if(e.getLocalizedMessage().contains("not unique")) {
+        } catch (SQLException exception) {
+            if(exception.getLocalizedMessage().contains("not unique")) {
                 throw new DataAccessException("Username already registered in the database.");
             }
-            throw new DataAccessException(String.format("Add User failed. : %s", e.getLocalizedMessage()));
+            throw new DataAccessException(String.format("Add User failed. : %s", exception.getLocalizedMessage()));
         }
     }
 
     public User getUser(String Username) throws DataAccessException {
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             try {
                 String sql = "SELECT * FROM user WHERE Username=?;";
-                statement = conn.prepareStatement(sql);
+                preparedStatement = conn.prepareStatement(sql);
 
-                statement.setString(1, Username);
+                preparedStatement.setString(1, Username);
 
-                ResultSet rs = statement.executeQuery();
-                if(!rs.next()) { throw new DataAccessException("Get User failed. : User not found."); }
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if(!resultSet.next()) { throw new DataAccessException("Get User failed. : User not found."); }
                 return new User(
-                        rs.getString("Username"),
-                        rs.getString("Password"),
-                        rs.getString("Email"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("Gender"),
-                        rs.getString("PersonID"));
+                        resultSet.getString("Username"),
+                        resultSet.getString("Password"),
+                        resultSet.getString("Email"),
+                        resultSet.getString("FirstName"),
+                        resultSet.getString("LastName"),
+                        resultSet.getString("Gender"),
+                        resultSet.getString("PersonID"));
             }
             finally {
-                if(statement != null) {
-                    statement.close();
+                if(preparedStatement != null) {
+                    preparedStatement.close();
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Get User failed. : %s", e.getLocalizedMessage()));
+        } catch (SQLException exception) {
+            throw new DataAccessException(String.format("Get User failed. : %s", exception.getLocalizedMessage()));
         }
     }
 
     public void modifyUser(User user) throws DataAccessException {
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
         try {
             try {
                 String sql = "UPDATE user SET password=?, email=?, firstName=?, lastName=?, gender=?, personID=? WHERE Username=?;";
-                statement = conn.prepareStatement(sql);
+                preparedStatement = conn.prepareStatement(sql);
 
-                statement.setString(1, user.getUsername());
-                statement.setString(2, user.getPassword());
-                statement.setString(3, user.getEmail());
-                statement.setString(4, user.getFirstName());
-                statement.setString(5, user.getLastName());
-                statement.setString(6, user.getGender());
-                statement.setString(7, user.getPersonID());
+                preparedStatement.setString(1, user.getUsername());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(3, user.getEmail());
+                preparedStatement.setString(4, user.getFirstName());
+                preparedStatement.setString(5, user.getLastName());
+                preparedStatement.setString(6, user.getGender());
+                preparedStatement.setString(7, user.getPersonID());
 
-                statement.executeUpdate();
+                preparedStatement.executeUpdate();
             }
             finally {
-                if(statement != null) {
-                    statement.close();
+                if(preparedStatement != null) {
+                    preparedStatement.close();
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Modify User failed. : %s", e.getLocalizedMessage()));
+        } catch (SQLException exception) {
+            throw new DataAccessException(String.format("Modify User failed. : %s", exception.getLocalizedMessage()));
         }
     }
 
@@ -104,7 +104,7 @@ public class UserDAO {
         try (Statement statement = conn.createStatement()){
             String sql = "DELETE FROM user";
             statement.executeUpdate(sql);
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new DataAccessException("SQL Error encountered while clearing tables");
         }
     }

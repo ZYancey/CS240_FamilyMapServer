@@ -11,30 +11,24 @@ import java.io.*;
 import java.net.HttpURLConnection;
 
 public class RegisterHandler implements HttpHandler {
-    /**
-     * A generic Result to be returned in the event of an error.
-     */
     private Result err;
 
-    /**The handler to register a user with the server.*/
-    public void handle(HttpExchange exch) throws IOException {
+    public void handle(HttpExchange httpExchange) throws IOException {
         boolean success = false;
         JSONParser json = new JSONParser();
 
         try {
-            //Accept only POST methods.
-            if(exch.getRequestMethod().toUpperCase().equals("POST")) {
-                InputStream reqBody = exch.getRequestBody();
+            if(httpExchange.getRequestMethod().toUpperCase().equals("POST")) {
+                InputStream reqBody = httpExchange.getRequestBody();
                 InputStreamReader in = new InputStreamReader(reqBody);
                 RegisterRequest rr = json.JSONToObject(in, RegisterRequest.class);
-                //Check to see if the request info is valid.
                 if(validateRequestBody(rr)) {
                     AuthResult ar = new RegisterService().register(rr);
 
                     if (ar.getMessage() != null) {
-                        exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                        httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 
-                        OutputStream respBody = exch.getResponseBody();
+                        OutputStream respBody = httpExchange.getResponseBody();
                         OutputStreamWriter out = new OutputStreamWriter(respBody);
                         out.write(json.ObjectToJSON(ar));
                         out.flush();
@@ -42,8 +36,8 @@ public class RegisterHandler implements HttpHandler {
                     }
 
 
-                    exch.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-                    OutputStream respBody = exch.getResponseBody();
+                    httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    OutputStream respBody = httpExchange.getResponseBody();
                     OutputStreamWriter out = new OutputStreamWriter(respBody);
                     out.write(json.ObjectToJSON(ar));
                     out.flush();
@@ -52,17 +46,17 @@ public class RegisterHandler implements HttpHandler {
                 }
             }
             if(!success) {
-                exch.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
                 if(err != null) {
-                    OutputStreamWriter out = new OutputStreamWriter(exch.getResponseBody());
+                    OutputStreamWriter out = new OutputStreamWriter(httpExchange.getResponseBody());
                     out.write(json.ObjectToJSON(err));
                     out.flush();
                 }
-                exch.getResponseBody().close();
+                httpExchange.getResponseBody().close();
             }
         } catch (IOException io) {
-            exch.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
-            exch.getResponseBody().close();
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            httpExchange.getResponseBody().close();
             io.printStackTrace();
         }
     }

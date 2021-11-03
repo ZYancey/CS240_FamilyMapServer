@@ -14,13 +14,13 @@ import java.util.Objects;
 public class FileHandler implements HttpHandler {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange httpExchange) throws IOException {
         boolean success = false;
 
         try {
-            if (exchange.getRequestMethod().equalsIgnoreCase("get")) {
-                Headers reqHeaders = exchange.getRequestHeaders();
-                String urlPath = exchange.getRequestURI().toString();
+            if (httpExchange.getRequestMethod().equalsIgnoreCase("get")) {
+                Headers reqHeaders = httpExchange.getRequestHeaders();
+                String urlPath = httpExchange.getRequestURI().toString();
                 if (Objects.equals(urlPath, "") || Objects.equals(urlPath, "/")) {
                     System.out.println("\"" + urlPath + "\" converted to index.html");
                     urlPath = "/index.html";
@@ -29,21 +29,21 @@ public class FileHandler implements HttpHandler {
                 String filePath = "web" + urlPath;
                 File file = new File(filePath);
 
-                OutputStream respBody = exchange.getResponseBody();
+                OutputStream respBody = httpExchange.getResponseBody();
 
                 if (!file.exists()) {
                     System.out.println("~~~~~404~~~~~~");
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
+                    httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
 
                     filePath = "web/HTML/404.html";
                     file = new File(filePath);
 
                     Files.copy(file.toPath(), respBody);
-                    exchange.getResponseBody().close();
+                    httpExchange.getResponseBody().close();
                     respBody.close();
 
                 } else {
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                     Files.copy(file.toPath(), respBody);
                     System.out.println("\t" + filePath + " served to user.");
                 }
@@ -56,16 +56,16 @@ public class FileHandler implements HttpHandler {
             }
 
             if (!success) {
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
-                exchange.getResponseBody().close();
+                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                httpExchange.getResponseBody().close();
             }
-        } catch (IOException e) {
+        } catch (IOException exception) {
             // Some kind of internal error has occurred inside the server (not the
             // client's fault), so we return an "internal server error" status code
             // to the client.
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_SERVER_ERROR, 0);
-            exchange.getResponseBody().close();
-            e.printStackTrace();
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_SERVER_ERROR, 0);
+            httpExchange.getResponseBody().close();
+            exception.printStackTrace();
         }
     }
 }
